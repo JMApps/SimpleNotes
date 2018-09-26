@@ -27,26 +27,31 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Создаем объект DatabaseManager и открываем базу данных
         DatabaseManager databaseManager = new DatabaseManager(this);
         databaseManager.databaseOpen();
 
         RecyclerView rvContentsMainList = findViewById(R.id.rv_contents_main_list);
 
+        // Присваиваем MainListModel метод getMainList из DatabaseManager
         List<MainListModel> mainListModels = databaseManager.getMainList();
 
+        // Реализовываем LayoutManager и передаем его в RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvContentsMainList.setLayoutManager(linearLayoutManager);
 
+        // Создаем объект MainListAdapter и передаем ему MainListAdapter и Context
         MainListAdapter mainListAdapter = new MainListAdapter(mainListModels, this);
-
+        // Обновляем адаптер
         mainListAdapter.notifyDataSetChanged();
-
+        // Связываем RecyclerView и MainListAdapter
         rvContentsMainList.setAdapter(mainListAdapter);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabAddNote = findViewById(R.id.fab_add_note);
+        fabAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Переходим в AddNoteActivity
                 Intent addNoteIntent = new Intent(MainActivity.this, AddNoteActivity.class);
                 startActivity(addNoteIntent);
             }

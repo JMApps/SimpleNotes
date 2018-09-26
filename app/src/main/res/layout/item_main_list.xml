@@ -17,11 +17,16 @@
             android:id="@+id/tv_chapter_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_chapter_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="3" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

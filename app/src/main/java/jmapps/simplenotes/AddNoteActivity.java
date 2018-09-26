@@ -19,15 +19,16 @@ public class AddNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.add_note));
         setContentView(R.layout.activity_add_note);
 
+        // Получаем объект DatabaseManager и открываем базу данных
         databaseManager = new DatabaseManager(this);
         databaseManager.databaseOpen();
 
         etAddChapterTitle = findViewById(R.id.et_add_chapter_title);
         etAddChapterContent = findViewById(R.id.et_add_chapter_content);
 
+        // Добавляем в Toolbar кнопку "Назад"
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -57,11 +58,16 @@ public class AddNoteActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Создаем метод, для добавления пункта в RecyclerView
     private void addNote() {
         final String strChapterTitle = etAddChapterTitle.getText().toString();
         final String strChapterContent = etAddChapterContent.getText().toString();
 
-        databaseManager.databaseInsert(strChapterTitle, strChapterContent);
+        // Если первое или второе поле ввода не пустые, добавляем в БД
+        // В противном случае просто вызываем Intent-переход к главной активити
+        if (!strChapterTitle.isEmpty() || !strChapterContent.isEmpty()) {
+            databaseManager.databaseInsertItem(strChapterTitle, strChapterContent);
+        }
 
         Intent returnMainActivityIntent = new Intent(AddNoteActivity.this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

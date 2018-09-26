@@ -22,25 +22,28 @@ public class DatabaseManager {
         context = ctx;
     }
 
+    // Метод открытия базы данных
     public void databaseOpen() throws SQLException {
         databaseHelper = new DatabaseHelper(context);
         sqLiteDatabase = databaseHelper.getWritableDatabase();
     }
 
+    // Метод закрытия базы данных
     public void databaseClose() {
         databaseHelper.close();
     }
 
-    public void databaseInsert(String chapterTitle, String chapterContent) {
+
+    // Метод вставки содержимого в пункт базы данных
+    public void databaseInsertItem(String chapterTitle, String chapterContent) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseHelper.chapterTitle, chapterTitle);
         contentValues.put(DatabaseHelper.chapterContent, chapterContent);
         sqLiteDatabase.insert(DatabaseHelper.tableName, null, contentValues);
     }
 
+    // Создание главного списка пунктов получаемого из базы данных
     public List<MainListModel> getMainList() {
-
-        databaseOpen();
 
         @SuppressLint("Recycle")
         Cursor cursor = sqLiteDatabase.query(DatabaseHelper.tableName,
@@ -62,22 +65,8 @@ public class DatabaseManager {
         return allMainList;
     }
 
-    public Cursor fetch() {
-        String[] columns = new String[]{
-                DatabaseHelper._ID,
-                DatabaseHelper.chapterTitle,
-                DatabaseHelper.chapterContent
-        };
-        Cursor cursor = sqLiteDatabase.query(DatabaseHelper.tableName, columns,
-                null, null, null, null, null);
-
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-        return cursor;
-    }
-
-    public void databaseUpdate(int _id, String chapterTitle, String chapterContent) {
+    // Метод обновления пункта базы данных
+    public void databaseUpdateItem(int _id, String chapterTitle, String chapterContent) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseHelper._ID, _id);
         contentValues.put(DatabaseHelper.chapterTitle, chapterTitle);
@@ -86,7 +75,9 @@ public class DatabaseManager {
                 DatabaseHelper._ID + "=" + _id, null);
     }
 
-    public void databaseDelete(int _id) {
-        sqLiteDatabase.delete(DatabaseHelper.tableName, DatabaseHelper._ID + "=" + _id, null);
+    // Метод удаления пункта базы данных
+    public void databaseDeleteItem(int _id) {
+        sqLiteDatabase.delete(DatabaseHelper.tableName,
+                DatabaseHelper._ID + "=" + _id, null);
     }
 }

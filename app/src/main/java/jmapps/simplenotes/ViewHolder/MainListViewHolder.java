@@ -8,6 +8,8 @@ import jmapps.simplenotes.R;
 
 public class MainListViewHolder extends RecyclerView.ViewHolder {
 
+    // ViewHolder пункта RecyclerView
+
     public final TextView tvChapterTitle;
     public final TextView tvChapterContent;
 
