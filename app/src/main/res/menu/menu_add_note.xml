@@ -4,6 +4,7 @@
     tools:context="jmapps.simplenotes.MainActivity">
     <item
         android:id="@+id/action_add_note"
+        android:icon="@drawable/ic_add_white"
         android:orderInCategory="1"
         android:title="@string/add"
         app:showAsAction="always" />

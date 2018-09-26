@@ -3,21 +3,22 @@ package jmapps.simplenotes;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.List;
-
-import jmapps.simplenotes.Adapter.MainListAdapter;
+import jmapps.simplenotes.Adapter.ListPagesAdapter;
 import jmapps.simplenotes.Database.DatabaseManager;
-import jmapps.simplenotes.Model.MainListModel;
+import jmapps.simplenotes.Fragment.BookmarkListFragment;
+import jmapps.simplenotes.Fragment.MainListFragment;
 
 public class MainActivity extends AppCompatActivity {
+
+    private DatabaseManager databaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,35 +28,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Создаем объект DatabaseManager и открываем базу данных
-        DatabaseManager databaseManager = new DatabaseManager(this);
+        databaseManager = new DatabaseManager(this);
         databaseManager.databaseOpen();
 
-        RecyclerView rvContentsMainList = findViewById(R.id.rv_contents_main_list);
+        ViewPager vpContainerForPages = findViewById(R.id.vp_container_for_pages);
+        setupViewPager(vpContainerForPages);
 
-        // Присваиваем MainListModel метод getMainList из DatabaseManager
-        List<MainListModel> mainListModels = databaseManager.getMainList();
-
-        // Реализовываем LayoutManager и передаем его в RecyclerView
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rvContentsMainList.setLayoutManager(linearLayoutManager);
-
-        // Создаем объект MainListAdapter и передаем ему MainListAdapter и Context
-        MainListAdapter mainListAdapter = new MainListAdapter(mainListModels, this);
-        // Обновляем адаптер
-        mainListAdapter.notifyDataSetChanged();
-        // Связываем RecyclerView и MainListAdapter
-        rvContentsMainList.setAdapter(mainListAdapter);
-
-        FloatingActionButton fabAddNote = findViewById(R.id.fab_add_note);
-        fabAddNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Переходим в AddNoteActivity
-                Intent addNoteIntent = new Intent(MainActivity.this, AddNoteActivity.class);
-                startActivity(addNoteIntent);
-            }
-        });
+        TabLayout tlPages = findViewById(R.id.tl_pages);
+        tlPages.setupWithViewPager(vpContainerForPages);
     }
 
     @Override
@@ -66,12 +46,35 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_sorting_by:
+                break;
+            case R.id.action_grid_list_modes:
+                break;
+            case R.id.action_about_us:
+                break;
+            case R.id.action_share:
+                break;
+            case R.id.action_exit:
+                finish();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Закрываем базу данных
+        databaseManager.databaseClose();
+    }
+
+    // Получаем объект на ListPagesAdapter и добавляем два фрагмента
+    private void setupViewPager(ViewPager viewPager) {
+        ListPagesAdapter listPagesAdapter = new ListPagesAdapter(getSupportFragmentManager());
+        listPagesAdapter.addFragment(new MainListFragment(), "ВСЕ");
+        listPagesAdapter.addFragment(new BookmarkListFragment(), "ИЗБРАННОЕ");
+        viewPager.setAdapter(listPagesAdapter);
     }
 }

@@ -2,9 +2,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="jmapps.simplenotes.MainActivity">
+
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:id="@+id/action_sorting_by"
+        android:orderInCategory="2"
+        android:title="@string/sorting_by"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_grid_list_modes"
+        android:orderInCategory="3"
+        android:title="@string/grid_mode"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_about_us"
+        android:orderInCategory="4"
+        android:title="@string/about_us"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_share"
+        android:orderInCategory="5"
+        android:title="@string/share"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_exit"
+        android:orderInCategory="6"
+        android:title="@string/exit"
         app:showAsAction="never" />
 </menu>

@@ -2,6 +2,7 @@ package jmapps.simplenotes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,12 @@ public class ModifyNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_note);
+
+        // Добавляем в Toolbar кнопку "Назад"
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         // Создаем объект DatabaseManager и открываем базу данных
         databaseManager = new DatabaseManager(this);
@@ -50,11 +57,17 @@ public class ModifyNoteActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_modify_note) {
-            modifyItem();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.action_add_bookmark:
+                break;
+            case R.id.action_share_note:
+                break;
+            case R.id.action_modify_note_save:
+                modifyItem();
+                break;
         }
 
         return super.onOptionsItemSelected(item);

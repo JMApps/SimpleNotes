@@ -1,11 +1,20 @@
 <resources>
     <string name="app_name">Заметки</string>
     <string name="action_settings">Настройки</string>
-    <string name="add_note">Добавить заметку</string>
-    <string name="modify_note">Редактировать заметку</string>
-    <string name="chapter_title">Название главы</string>
-    <string name="chapter_content">Содержимое главы</string>
+    <string name="add_note">Добавить</string>
+    <string name="modify_note">Изменить</string>
+    <string name="chapter_title">Название</string>
+    <string name="chapter_content">Текст…</string>
     <string name="add">Добавить</string>
-    <string name="modify">Изменить</string>
+    <string name="add_in_bookmark">Добавить в избранное</string>
     <string name="save">Сохранить</string>
+    <string name="modify">Изменить</string>
+    <string name="search_by_list">Поиск по списку</string>
+    <string name="sorting_by">Сортировка по</string>
+    <string name="grid_mode">Сетка</string>
+    <string name="list_mode">Список</string>
+    <string name="about_us">О нас</string>
+    <string name="share">Поделиться</string>
+    <string name="exit">Выход</string>
+    <string name="first_note_added">Добавьте первую заметку</string>
 </resources>
