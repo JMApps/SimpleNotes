@@ -59,6 +59,7 @@ public class ModifyNoteActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                // Уничтожить активити
                 finish();
                 break;
             case R.id.action_add_bookmark:
@@ -66,7 +67,12 @@ public class ModifyNoteActivity extends AppCompatActivity {
             case R.id.action_share_note:
                 break;
             case R.id.action_modify_note_save:
+                // Изменить пункт
                 modifyItem();
+                break;
+            case R.id.action_modify_note_delete:
+                // Удалить пункт
+                deleteItem();
                 break;
         }
 
@@ -91,6 +97,15 @@ public class ModifyNoteActivity extends AppCompatActivity {
         returnMainList();
     }
 
+    private void deleteItem() {
+        // Удаляем текущий пункт
+        databaseManager.databaseDeleteItem(_id);
+
+        // Вызываем метод с Intent-переходом к главной активити
+        returnMainList();
+    }
+
+    // Метод с Intent-переходом к главной активити
     private void returnMainList() {
         Intent toMainList = new Intent(ModifyNoteActivity.this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -46,12 +46,12 @@ public class AddNoteActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_add_note) {
-
+            // Добавить заметку
             addNote();
             return true;
 
         } else if (id == android.R.id.home) {
-
+            // Уничтожить активити
             finish();
             return true;
         }

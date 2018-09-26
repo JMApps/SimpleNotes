@@ -8,6 +8,7 @@
     <string name="add">Добавить</string>
     <string name="add_in_bookmark">Добавить в избранное</string>
     <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
     <string name="modify">Изменить</string>
     <string name="search_by_list">Поиск по списку</string>
     <string name="sorting_by">Сортировка по</string>
