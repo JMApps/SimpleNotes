@@ -48,6 +48,7 @@ public class AddNoteActivity extends AppCompatActivity {
         if (id == R.id.action_add_note) {
 
             addNote();
+            return true;
 
         } else if (id == android.R.id.home) {
 

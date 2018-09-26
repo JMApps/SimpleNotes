@@ -2,7 +2,10 @@
     <string name="app_name">Заметки</string>
     <string name="action_settings">Настройки</string>
     <string name="add_note">Добавить заметку</string>
+    <string name="modify_note">Редактировать заметку</string>
     <string name="chapter_title">Название главы</string>
     <string name="chapter_content">Содержимое главы</string>
     <string name="add">Добавить</string>
+    <string name="modify">Изменить</string>
+    <string name="save">Сохранить</string>
 </resources>
