@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Создаем таблицу
     private static final String createTable = "CREATE TABLE " + tableName + "(" + _ID +
             " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + chapterTitle + " TEXT, " + chapterContent + " TEXT);";
+            + chapterTitle + " TEXT, " + chapterContent + " TEXT, " + "Favorite NUMERIC);";
 
     // Создаем переменную со столбцами
     public static final String[] columns = {_ID, chapterTitle, chapterContent};

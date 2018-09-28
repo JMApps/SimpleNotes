@@ -4,28 +4,37 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Filter;
+import android.widget.Filterable;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import jmapps.simplenotes.Database.DatabaseManager;
 import jmapps.simplenotes.Model.MainListModel;
 import jmapps.simplenotes.ModifyNoteActivity;
 import jmapps.simplenotes.R;
 import jmapps.simplenotes.ViewHolder.MainListViewHolder;
 
-public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> {
+public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> implements Filterable {
 
+    private List<MainListModel> firstListState;
     private List<MainListModel> mMainListModel;
     private Context mContext;
     private LayoutInflater inflater;
+    private DatabaseManager databaseManager;
 
     public MainListAdapter(List<MainListModel> mainListModel,
                            Context context) {
         this.mMainListModel = mainListModel;
         this.mContext = context;
         inflater = LayoutInflater.from(mContext);
+        databaseManager = new DatabaseManager(mContext);
     }
 
     @NonNull
@@ -36,7 +45,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MainListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MainListViewHolder holder, final int position) {
 
         final String _id = mMainListModel.get(position).get_id();
         final String strChapterTitle = mMainListModel.get(position).getChapterTitle();
@@ -44,6 +53,17 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> {
 
         holder.tvChapterTitle.setText(strChapterTitle);
         holder.tvChapterContent.setText(strChapterContent);
+
+        holder.tbAddBookmark.setOnCheckedChangeListener(null);
+        boolean bookmarkState = holder.mPreferences.getBoolean("bookmark_modify " + _id, false);
+        holder.tbAddBookmark.setChecked(bookmarkState);
+
+        holder.tbAddBookmark.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //databaseManager.addRemoveBookmark(false, Integer.parseInt(_id));
+            }
+        });
 
         // Устанавливаем слушателя на пункт RecyclerView
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -61,5 +81,36 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> {
     @Override
     public int getItemCount() {
         return mMainListModel.size();
+    }
+
+    // Даже не представляю как это работает
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                final FilterResults oReturn = new FilterResults();
+                final List<MainListModel> results = new ArrayList<>();
+                if (firstListState == null)
+                    firstListState = mMainListModel;
+                if (constraint != null) {
+                    if (firstListState != null & (firstListState != null ? firstListState.size() : 0) > 0) {
+                        for (final MainListModel g : firstListState) {
+                            if (g.getChapterTitle().toLowerCase().contains(constraint.toString().toLowerCase())
+                                    || g.getChapterContent().toLowerCase().contains(constraint.toString().toLowerCase()))
+                                results.add(g);
+                        }
+                    }
+                    oReturn.values = results;
+                }
+                return oReturn;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mMainListModel = (ArrayList<MainListModel>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }

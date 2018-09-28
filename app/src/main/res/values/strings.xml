@@ -11,6 +11,7 @@
     <string name="delete">Удалить</string>
     <string name="modify">Изменить</string>
     <string name="search_by_list">Поиск по списку</string>
+    <string name="night_mode">Ночной режим</string>
     <string name="sorting_by">Сортировка по</string>
     <string name="grid_mode">Сетка</string>
     <string name="list_mode">Список</string>
@@ -18,4 +19,5 @@
     <string name="share">Поделиться</string>
     <string name="exit">Выход</string>
     <string name="first_note_added">Добавьте первую заметку</string>
+    <string name="first_bookmark_added">Добавьте первую закладку</string>
 </resources>

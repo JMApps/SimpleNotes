@@ -4,6 +4,7 @@
     package="jmapps.simplenotes">
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"

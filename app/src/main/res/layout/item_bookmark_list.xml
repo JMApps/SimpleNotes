@@ -21,7 +21,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_chapter_title"
+                android:id="@+id/tv_bookmark_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -30,7 +30,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tv_chapter_content"
+                android:id="@+id/tv_bookmark_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"

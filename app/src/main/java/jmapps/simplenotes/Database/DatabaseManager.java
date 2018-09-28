@@ -3,13 +3,16 @@ package jmapps.simplenotes.Database;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import jmapps.simplenotes.Model.BookmarkListModel;
 import jmapps.simplenotes.Model.MainListModel;
 
 public class DatabaseManager {
@@ -65,8 +68,50 @@ public class DatabaseManager {
         return allMainList;
     }
 
+
+    // Создание списка избранных пунктов получаемого из базы данных
+    public List<BookmarkListModel> getBookmarkList() {
+
+        @SuppressLint("Recycle")
+        Cursor cursor = sqLiteDatabase.query(DatabaseHelper.tableName,
+                DatabaseHelper.columns,
+                "Favorite = 1",
+                null, null, null, null);
+
+        List<BookmarkListModel> allBookmarkList = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                allBookmarkList.add(new BookmarkListModel(
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper._ID)),
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterTitle)),
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterContent))));
+                cursor.moveToNext();
+            }
+        }
+        return allBookmarkList;
+    }
+
+    // Метод добавления пункта в избранное
+    public void addRemoveBookmark(boolean isChecked, int _id) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("Favorite", isChecked);
+
+        if (isChecked) {
+            Toast.makeText(context, "Добавлено в избранное", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Удалено из избраннного", Toast.LENGTH_SHORT).show();
+        }
+
+        sqLiteDatabase.update(DatabaseHelper.tableName,
+                contentValues,
+                "_id = ?",
+                new String[]{String.valueOf(_id)});
+    }
+
     // Метод обновления пункта базы данных
-    public void databaseUpdateItem(int _id, String chapterTitle, String chapterContent) {
+    public void databaseUpdateItem(int _id, String chapterTitle,
+                                   String chapterContent) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseHelper._ID, _id);
         contentValues.put(DatabaseHelper.chapterTitle, chapterTitle);

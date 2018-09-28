@@ -9,21 +9,21 @@ import android.widget.ToggleButton;
 
 import jmapps.simplenotes.R;
 
-public class MainListViewHolder extends RecyclerView.ViewHolder {
+public class BookmarkListViewHolder extends RecyclerView.ViewHolder {
 
     public SharedPreferences mPreferences;
 
-    public final TextView tvChapterTitle;
-    public final TextView tvChapterContent;
+    public final TextView tvBookmarkTitle;
+    public final TextView tvBookmarkContent;
     public final ToggleButton tbAddBookmark;
 
-    public MainListViewHolder(View itemView) {
+    public BookmarkListViewHolder(View itemView) {
         super(itemView);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(itemView.getContext());
 
-        tvChapterTitle = itemView.findViewById(R.id.tv_chapter_title);
-        tvChapterContent = itemView.findViewById(R.id.tv_chapter_content);
+        tvBookmarkTitle = itemView.findViewById(R.id.tv_bookmark_title);
+        tvBookmarkContent = itemView.findViewById(R.id.tv_bookmark_content);
         tbAddBookmark = itemView.findViewById(R.id.tb_add_bookmark);
     }
 }

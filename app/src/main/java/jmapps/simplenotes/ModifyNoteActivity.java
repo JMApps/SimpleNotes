@@ -1,7 +1,10 @@
 package jmapps.simplenotes;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -12,11 +15,19 @@ import jmapps.simplenotes.Database.DatabaseManager;
 
 public class ModifyNoteActivity extends AppCompatActivity {
 
-    private EditText etModifyChapterTitle;
-    private EditText etModifyChapterContent;
-    private int _id;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+
     private DatabaseManager databaseManager;
 
+    private MenuItem bookmarkItemModify;
+
+    private EditText etModifyChapterTitle;
+    private EditText etModifyChapterContent;
+
+    private int _id;
+
+    @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +38,9 @@ public class ModifyNoteActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mPreferences.edit();
 
         // Создаем объект DatabaseManager и открываем базу данных
         databaseManager = new DatabaseManager(this);
@@ -52,17 +66,45 @@ public class ModifyNoteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_modify_note, menu);
+        // Получаем доступ к пункту меню и задаем ему состояние полученное по mPreferences
+        bookmarkItemModify = menu.findItem(R.id.action_add_bookmark_modify);
+        boolean bookmarkItemState = mPreferences.getBoolean("bookmark_modify " + _id, false);
+        bookmarkItemModify.setChecked(bookmarkItemState);
+
+        // В зависимости от полученного состояния показываем разные иконки
+        if (bookmarkItemState) {
+            bookmarkItemModify.setIcon(R.drawable.ic_bookmark_white);
+        } else {
+            bookmarkItemModify.setIcon(R.drawable.ic_bookmark_border_white);
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        boolean isChecked;
+        item.setChecked(isChecked = !item.isChecked());
+
         switch (item.getItemId()) {
             case android.R.id.home:
-                // Уничтожить активити
                 finish();
                 break;
-            case R.id.action_add_bookmark:
+            case R.id.action_add_bookmark_modify:
+                if (isChecked) {
+                    // Закладка активна
+                    bookmarkItemModify.setChecked(true);
+                    bookmarkItemModify.setIcon(R.drawable.ic_bookmark_white);
+                    databaseManager.addRemoveBookmark(true, _id);
+                } else {
+                    // Закладка неактивна
+                    bookmarkItemModify.setChecked(false);
+                    bookmarkItemModify.setIcon(R.drawable.ic_bookmark_border_white);
+                    databaseManager.addRemoveBookmark(false, _id);
+                }
+
+                // Сохраняем состояние
+                mEditor.putBoolean("bookmark_modify " + _id, isChecked).apply();
+
                 break;
             case R.id.action_share_note:
                 break;
