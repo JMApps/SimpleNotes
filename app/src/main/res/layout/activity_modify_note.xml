@@ -6,14 +6,23 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
+    android:padding="16dp"
     tools:context=".AddNoteActivity">
 
     <EditText
         android:id="@+id/et_modify_chapter_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/chapter_title"
-        android:padding="16dp" />
+        android:background="@null"
+        android:hint="@string/without_chapter_title"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/main" />
 
     <EditText
         android:id="@+id/et_modify_chapter_content"
@@ -22,6 +31,5 @@
         android:layout_weight="1"
         android:background="@null"
         android:gravity="start"
-        android:hint="@string/chapter_content"
-        android:padding="16dp" />
+        android:hint="@string/without_chapter_content" />
 </LinearLayout>

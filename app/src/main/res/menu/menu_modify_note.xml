@@ -17,16 +17,10 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_modify_note_save"
-        android:icon="@drawable/ic_save"
-        android:orderInCategory="3"
-        android:title="@string/save"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_modify_note_delete"
         android:icon="@drawable/ic_delete"
-        android:orderInCategory="4"
+        android:orderInCategory="3"
         android:title="@string/delete"
-        app:showAsAction="never" />
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
 </menu>

@@ -23,20 +23,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import jmapps.simplenotes.Adapter.MainListAdapter;
 import jmapps.simplenotes.AddNoteActivity;
 import jmapps.simplenotes.Database.DatabaseManager;
 import jmapps.simplenotes.Model.MainListModel;
+import jmapps.simplenotes.Observer.UpdateLists;
 import jmapps.simplenotes.R;
 
-public class MainListFragment extends Fragment implements MenuItem.OnMenuItemClickListener, SearchView.OnQueryTextListener {
+public class MainListFragment extends Fragment implements
+        MenuItem.OnMenuItemClickListener, SearchView.OnQueryTextListener, Observer {
 
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
 
     private RecyclerView rvContentsMainList;
     private MainListAdapter mainListAdapter;
+    private UpdateLists updateLists;
 
     private MenuItem gridMode;
 
@@ -90,7 +95,18 @@ public class MainListFragment extends Fragment implements MenuItem.OnMenuItemCli
             }
         });
 
+        updateLists = UpdateLists.getInstance();
+        updateLists.addObserver(this);
+        updateLists.setUpdateAdapterLists(false);
+
         return rootMainList;
+    }
+
+    @Override
+    public void update(Observable observable, Object arg) {
+        if (observable instanceof UpdateLists) {
+            mainListAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -103,8 +119,10 @@ public class MainListFragment extends Fragment implements MenuItem.OnMenuItemCli
         gridMode.setChecked(gridModeState);
         // В зависимости от полученного состояния устанавливаем режимы отображения
         if (gridModeState) {
+            gridMode.setTitle(R.string.list_mode);
             rvContentsMainList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         } else {
+            gridMode.setTitle(R.string.grid_mode);
             rvContentsMainList.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
         // Реализовываем setOnMenuItemClickListener
@@ -124,11 +142,11 @@ public class MainListFragment extends Fragment implements MenuItem.OnMenuItemCli
 
         if (isChecked) {
             // Режим сетки активен
-            gridMode.setChecked(true);
+            gridMode.setTitle(R.string.list_mode);
             rvContentsMainList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         } else {
             // Режим сетки неактивен
-            gridMode.setChecked(false);
+            gridMode.setTitle(R.string.grid_mode);
             rvContentsMainList.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
         // Сохраняем состояние
@@ -149,5 +167,11 @@ public class MainListFragment extends Fragment implements MenuItem.OnMenuItemCli
             mainListAdapter.getFilter().filter(newText);
         }
         return true;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        updateLists.deleteObservers();
     }
 }

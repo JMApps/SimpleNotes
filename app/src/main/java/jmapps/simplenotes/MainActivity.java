@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -95,11 +96,20 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.action_about_us:
+
+
+
                 break;
             case R.id.action_share:
+
+                // Метод "Поделиться"
+                shareAppLink();
+
                 break;
             case R.id.action_exit:
+
                 finish();
+
                 break;
         }
 
@@ -117,7 +127,16 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ListPagesAdapter listPagesAdapter = new ListPagesAdapter(getSupportFragmentManager());
         listPagesAdapter.addFragment(new MainListFragment(), "ВСЕ");
-        listPagesAdapter.addFragment(new BookmarkListFragment(), "ИЗБРАННОЕ");
+        listPagesAdapter.addFragment(new BookmarkListFragment(), "ИЗБРАННЫЕ");
         viewPager.setAdapter(listPagesAdapter);
+    }
+
+    private void shareAppLink() {
+        String appLink = "https://play.google.com/store/apps/details?id=jmapps.simplenotes";
+
+        Intent shareAppLink = new Intent(Intent.ACTION_SEND);
+        shareAppLink.setType("text/plain");
+        shareAppLink.putExtra(Intent.ACTION_SEND, appLink);
+        startActivity(shareAppLink);
     }
 }

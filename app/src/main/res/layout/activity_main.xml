@@ -26,7 +26,7 @@
             app:tabGravity="fill"
             app:tabIndicatorHeight="3dp"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/lightSilver"
+            app:tabSelectedTextColor="@color/colorAccent"
             app:tabTextColor="@color/white" />
     </android.support.design.widget.AppBarLayout>
 

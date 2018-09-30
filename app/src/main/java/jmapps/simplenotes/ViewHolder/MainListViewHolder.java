@@ -15,7 +15,6 @@ public class MainListViewHolder extends RecyclerView.ViewHolder {
 
     public final TextView tvChapterTitle;
     public final TextView tvChapterContent;
-    public final ToggleButton tbAddBookmark;
 
     public MainListViewHolder(View itemView) {
         super(itemView);
@@ -24,6 +23,5 @@ public class MainListViewHolder extends RecyclerView.ViewHolder {
 
         tvChapterTitle = itemView.findViewById(R.id.tv_chapter_title);
         tvChapterContent = itemView.findViewById(R.id.tv_chapter_content);
-        tbAddBookmark = itemView.findViewById(R.id.tb_add_bookmark);
     }
 }

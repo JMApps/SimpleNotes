@@ -3,25 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
+    android:padding="16dp"
     tools:context=".AddNoteActivity">
 
     <EditText
         android:id="@+id/et_add_chapter_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@null"
         android:hint="@string/chapter_title"
-        android:padding="16dp">
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:textStyle="bold" />
 
-        <requestFocus />
-    </EditText>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/main" />
 
     <EditText
         android:id="@+id/et_add_chapter_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="@null"
         android:gravity="start"
         android:hint="@string/chapter_content"
-        android:padding="16dp" />
+        android:imeOptions="actionDone" />
 </LinearLayout>

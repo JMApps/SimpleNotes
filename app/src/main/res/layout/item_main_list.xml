@@ -5,12 +5,13 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:minHeight="100dp"
-    app:cardElevation="5dp">
+    app:cardCornerRadius="5dp"
+    app:cardElevation="3dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="start"
         android:orientation="horizontal"
         android:padding="16dp">
 
@@ -27,6 +28,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -36,14 +38,5 @@
                 android:ellipsize="end"
                 android:maxLines="3" />
         </LinearLayout>
-
-        <ToggleButton
-            android:id="@+id/tb_add_bookmark"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/bookmark_state"
-            android:text=""
-            android:textOff=""
-            android:textOn="" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

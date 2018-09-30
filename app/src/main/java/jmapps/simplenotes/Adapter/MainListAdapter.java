@@ -4,18 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jmapps.simplenotes.Database.DatabaseManager;
 import jmapps.simplenotes.Model.MainListModel;
 import jmapps.simplenotes.ModifyNoteActivity;
 import jmapps.simplenotes.R;
@@ -27,14 +24,12 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> im
     private List<MainListModel> mMainListModel;
     private Context mContext;
     private LayoutInflater inflater;
-    private DatabaseManager databaseManager;
 
     public MainListAdapter(List<MainListModel> mainListModel,
                            Context context) {
         this.mMainListModel = mainListModel;
         this.mContext = context;
         inflater = LayoutInflater.from(mContext);
-        databaseManager = new DatabaseManager(mContext);
     }
 
     @NonNull
@@ -53,17 +48,6 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> im
 
         holder.tvChapterTitle.setText(strChapterTitle);
         holder.tvChapterContent.setText(strChapterContent);
-
-        holder.tbAddBookmark.setOnCheckedChangeListener(null);
-        boolean bookmarkState = holder.mPreferences.getBoolean("bookmark_modify " + _id, false);
-        holder.tbAddBookmark.setChecked(bookmarkState);
-
-        holder.tbAddBookmark.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //databaseManager.addRemoveBookmark(false, Integer.parseInt(_id));
-            }
-        });
 
         // Устанавливаем слушателя на пункт RecyclerView
         holder.itemView.setOnClickListener(new View.OnClickListener() {

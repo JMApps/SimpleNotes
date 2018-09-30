@@ -10,8 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import jmapps.simplenotes.Database.DatabaseManager;
+import jmapps.simplenotes.Observer.UpdateLists;
 
 public class ModifyNoteActivity extends AppCompatActivity {
 
@@ -19,7 +21,6 @@ public class ModifyNoteActivity extends AppCompatActivity {
     private SharedPreferences.Editor mEditor;
 
     private DatabaseManager databaseManager;
-
     private MenuItem bookmarkItemModify;
 
     private EditText etModifyChapterTitle;
@@ -90,16 +91,25 @@ public class ModifyNoteActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action_add_bookmark_modify:
+
+                UpdateLists updateAdapterChapters = UpdateLists.getInstance();
+
                 if (isChecked) {
                     // Закладка активна
                     bookmarkItemModify.setChecked(true);
                     bookmarkItemModify.setIcon(R.drawable.ic_bookmark_white);
                     databaseManager.addRemoveBookmark(true, _id);
+
+                    updateAdapterChapters.setUpdateAdapterLists(true);
+                    updateAdapterChapters.notifyObservers();
                 } else {
                     // Закладка неактивна
                     bookmarkItemModify.setChecked(false);
                     bookmarkItemModify.setIcon(R.drawable.ic_bookmark_border_white);
                     databaseManager.addRemoveBookmark(false, _id);
+
+                    updateAdapterChapters.setUpdateAdapterLists(false);
+                    updateAdapterChapters.notifyObservers();
                 }
 
                 // Сохраняем состояние
@@ -108,13 +118,10 @@ public class ModifyNoteActivity extends AppCompatActivity {
                 break;
             case R.id.action_share_note:
                 break;
-            case R.id.action_modify_note_save:
-                // Изменить пункт
-                modifyItem();
-                break;
             case R.id.action_modify_note_delete:
                 // Удалить пункт
                 deleteItem();
+                Toast.makeText(this, R.string.note_deleted, Toast.LENGTH_SHORT).show();
                 break;
         }
 

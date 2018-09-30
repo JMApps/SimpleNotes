@@ -2,9 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="jmapps.simplenotes.MainActivity">
-
     <item
-        android:id="@+id/action_search_by_chapters"
+        android:id="@+id/action_search_by_bookmarks"
         android:icon="@drawable/ic_search"
         android:imeOptions="actionSearch"
         android:orderInCategory="1"
@@ -14,7 +13,7 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/action_grid_list_modes"
+        android:id="@+id/action_grid_list_modes_bookmark"
         android:orderInCategory="3"
         android:title="@string/grid_mode"
         app:showAsAction="never" />

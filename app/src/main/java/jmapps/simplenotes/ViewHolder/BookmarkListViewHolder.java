@@ -15,7 +15,6 @@ public class BookmarkListViewHolder extends RecyclerView.ViewHolder {
 
     public final TextView tvBookmarkTitle;
     public final TextView tvBookmarkContent;
-    public final ToggleButton tbAddBookmark;
 
     public BookmarkListViewHolder(View itemView) {
         super(itemView);
@@ -24,6 +23,5 @@ public class BookmarkListViewHolder extends RecyclerView.ViewHolder {
 
         tvBookmarkTitle = itemView.findViewById(R.id.tv_bookmark_title);
         tvBookmarkContent = itemView.findViewById(R.id.tv_bookmark_content);
-        tbAddBookmark = itemView.findViewById(R.id.tb_add_bookmark);
     }
 }
