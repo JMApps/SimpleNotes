@@ -22,7 +22,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
+        android:layout_height="0.6dp"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:background="@color/main" />
@@ -36,5 +36,6 @@
         android:focusableInTouchMode="true"
         android:gravity="start"
         android:hint="@string/chapter_content"
-        android:imeOptions="actionDone" />
+        android:imeOptions="actionDone"
+        android:inputType="text" />
 </LinearLayout>

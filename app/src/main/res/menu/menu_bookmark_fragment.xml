@@ -13,7 +13,7 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/action_grid_list_modes_bookmark"
+        android:id="@+id/action_grid_mode_bookmark"
         android:orderInCategory="3"
         android:title="@string/grid_mode"
         app:showAsAction="never" />

@@ -19,12 +19,13 @@ import jmapps.simplenotes.ModifyNoteActivity;
 import jmapps.simplenotes.R;
 import jmapps.simplenotes.ViewHolder.MainListViewHolder;
 
+@SuppressWarnings("unchecked")
 public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> implements Filterable {
 
     private List<MainListModel> firstListState;
     private List<MainListModel> mMainListModel;
-    private Context mContext;
-    private LayoutInflater inflater;
+    private final Context mContext;
+    private final LayoutInflater inflater;
 
     public MainListAdapter(List<MainListModel> mainListModel,
                            Context context) {
@@ -55,10 +56,14 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> im
         holder.tvAddNoteDate.setText(strGetTimeCreation);
 
         if (strGetTimeChange != null) {
+            // Если строка strGetTimeChange не пуста
             holder.tvChangeNoteDate.setVisibility(View.VISIBLE);
-            holder.tvChangeNoteDate.setText(" / " + strGetTimeChange);
+            holder.tvSlash.setVisibility(View.VISIBLE);
+            holder.tvChangeNoteDate.setText(strGetTimeChange);
         } else {
+            // Если строка strGetTimeChange пуста
             holder.tvChangeNoteDate.setVisibility(View.GONE);
+            holder.tvSlash.setVisibility(View.GONE);
         }
 
         // Устанавливаем слушателя на пункт RecyclerView
@@ -102,6 +107,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> im
                 return oReturn;
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 mMainListModel = (ArrayList<MainListModel>) results.values;

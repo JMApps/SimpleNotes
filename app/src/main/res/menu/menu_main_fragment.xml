@@ -14,7 +14,7 @@
         tools:ignore="AlwaysShowAction" />
 
     <item
-        android:id="@+id/action_grid_list_modes"
+        android:id="@+id/action_grid_mode"
         android:orderInCategory="3"
         android:title="@string/grid_mode"
         app:showAsAction="never" />

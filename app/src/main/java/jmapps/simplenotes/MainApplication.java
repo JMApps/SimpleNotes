@@ -44,7 +44,6 @@ public class MainApplication extends Application {
 
     public void setIsNightModeEnabled(boolean isNightModeEnabled) {
         this.isNightModeEnabled = isNightModeEnabled;
-
         mEditor.putBoolean(NightMode, isNightModeEnabled).apply();
     }
 }

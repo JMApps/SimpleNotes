@@ -9,6 +9,7 @@ import java.util.List;
 
 public class ListPagesAdapter extends FragmentStatePagerAdapter {
 
+    // Создам список для фрагментов и заголовоков
     private final List<Fragment> fragmentList = new ArrayList<>();
     private final List<String> titleList = new ArrayList<>();
 

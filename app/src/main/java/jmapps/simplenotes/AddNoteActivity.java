@@ -47,6 +47,7 @@ public class AddNoteActivity extends AppCompatActivity implements
         databaseManager = new DatabaseManager(this);
         databaseManager.databaseOpen();
 
+        // Получаем доступ к actionBar
         actionBar = getSupportActionBar();
 
         etAddChapterTitle = findViewById(R.id.et_add_chapter_title);
@@ -59,7 +60,41 @@ public class AddNoteActivity extends AppCompatActivity implements
         etAddChapterTitle.setOnTouchListener(this);
         etAddChapterContent.setOnTouchListener(this);
 
+        // Отображаем клавиатуру с фокусом на etAddChapterContent
         openKeyboard();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add_note, menu);
+        addChangeNote = menu.findItem(R.id.action_add_change);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean isCheckedAddChange;
+        // Задаем для addChangeNote состояние isCheckedAddChange
+        // Состояние же isCheckedAddChange противположно текущему состоянию addChangeNote
+        addChangeNote.setChecked(isCheckedAddChange = !addChangeNote.isChecked());
+
+        switch (item.getItemId()) {
+            case R.id.action_add_change:
+                if (isCheckedAddChange) {
+                    // Добавить заметку
+                    saveNote();
+                } else {
+                    // Изменить заметку
+                    modifyItem();
+                }
+                break;
+            case android.R.id.home:
+                // Добавить заметку
+                addNote();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -81,49 +116,16 @@ public class AddNoteActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add_note, menu);
-        addChangeNote = menu.findItem(R.id.action_add_change);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        boolean isChecked;
-        item.setChecked(isChecked = !item.isChecked());
-
-        switch (item.getItemId()) {
-            case R.id.action_add_change:
-                if (isChecked) {
-                    // Добавить заметку
-                    saveNote();
-                    questionDialogState = true;
-                } else {
-                    // Изменить заметку
-                    modifyItem();
-                    questionDialogState = false;
-                }
-                break;
-            case android.R.id.home:
-                // Добавить заметку
-                addNote();
-
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    // Если фокус на первом поле и нажать интер, убираем из него фокус
-    // и передаем фокус нижнему полю
+    // Если фокус на первом EditText по нажатию на "Enter" перекидываем фокус к нижнему EditText
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         boolean handled = false;
         switch (v.getId()) {
             case R.id.et_add_chapter_title:
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    // Удаляем фокус
                     etAddChapterTitle.clearFocus();
+                    // Устанавливаем фокус
                     etAddChapterContent.requestFocus();
                     handled = true;
                 }
@@ -152,12 +154,18 @@ public class AddNoteActivity extends AppCompatActivity implements
     // Добавить заметку
     private void saveNote() {
         getTextFromEditTexts();
+        // Если поля обоих или одного EditText не пусты
         if (!strChapterTitle.isEmpty() || !strChapterContent.isEmpty()) {
-            clearFocusEditTexts();
+            // Меняем заговок на "Изменить"
             addChangeNote.setTitle(R.string.modify_note);
-            if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
+            // Удаляем фокус с обоих EditText
+            clearFocusEditTexts();
+            // Скрываем клавиатуру
             closeKeyboard();
+            // Отображаем кнопку "Назад"
+            if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
         } else {
+            // Если поля обоих или одного EditText пусты уничтожаем активити
             finish();
         }
     }
@@ -165,14 +173,14 @@ public class AddNoteActivity extends AppCompatActivity implements
     // Изменить заметку
     private void modifyItem() {
         getTextFromEditTexts();
+        // Если поля обоих или одного EditText не пусты
         if (!strChapterTitle.isEmpty() || !strChapterContent.isEmpty()) {
+            // Меняем заговок на "Сохранить"
             addChangeNote.setTitle(R.string.save_note);
-            if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(false);
+            // Отображаем клавиатуру с фокусом на strChapterContent
             openKeyboard();
-        } else {
-            addChangeNote.setTitle(R.string.save_note);
+            // Отображаем кнопку "Назад"
             if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(false);
-            openKeyboard();
         }
     }
 
@@ -189,7 +197,7 @@ public class AddNoteActivity extends AppCompatActivity implements
         }
     }
 
-    // Диалоговое окно с предупреждение о сохранении введенного текста
+    // Диалоговое окно с предложением сохранить или удалить данные
     private void questionDialog() {
         final AlertDialog.Builder questionDialog = new AlertDialog.Builder(this);
 
@@ -197,7 +205,6 @@ public class AddNoteActivity extends AppCompatActivity implements
         questionDialog.setTitle(R.string.warning);
         questionDialog.setMessage(R.string.question_save_note);
         questionDialog.setCancelable(false);
-
 
         // Обработчик варианта "Сохранить"
         questionDialog.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
@@ -212,7 +219,6 @@ public class AddNoteActivity extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 finish();
-                Toast.makeText(AddNoteActivity.this, R.string.note_deleted, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -255,7 +261,7 @@ public class AddNoteActivity extends AppCompatActivity implements
         }, 200);
     }
 
-    // Возвращаемся к главной активти
+    // Метод возвращения к главной активти
     private void returnMainActivity() {
         Intent toMainList = new Intent(AddNoteActivity.this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

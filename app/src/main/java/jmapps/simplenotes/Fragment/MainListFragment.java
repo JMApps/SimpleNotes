@@ -39,9 +39,9 @@ public class MainListFragment extends Fragment implements
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
 
+    private UpdateLists updateLists;
     private RecyclerView rvContentsMainList;
     private MainListAdapter mainListAdapter;
-    private UpdateLists updateLists;
 
     private MenuItem gridMode;
 
@@ -52,7 +52,9 @@ public class MainListFragment extends Fragment implements
 
         View rootMainList = inflater.inflate(R.layout.fragment_main, container, false);
 
+        // Сохраняем данные при смене ориентации экрана
         setRetainInstance(true);
+        // Отображаем пункты меню
         setHasOptionsMenu(true);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -95,6 +97,7 @@ public class MainListFragment extends Fragment implements
             }
         });
 
+        // Получаем объект Observer в котором слушатель на изменение в списках
         updateLists = UpdateLists.getInstance();
         updateLists.addObserver(this);
         updateLists.setUpdateAdapterLists(false);
@@ -105,19 +108,23 @@ public class MainListFragment extends Fragment implements
     @Override
     public void update(Observable observable, Object arg) {
         if (observable instanceof UpdateLists) {
+            // Если список был изменен обновляем адаптер
             mainListAdapter.notifyDataSetChanged();
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_main_fragment, menu);
-        // Получаем доступ к пункту меню и задаем ему состояние полученное по mPreferences
-        gridMode = menu.findItem(R.id.action_grid_list_modes);
+        gridMode = menu.findItem(R.id.action_grid_mode);
+
+        // Задаем для gridModeState состояние полученное из mPreferences по умолчанию false
         boolean gridModeState = mPreferences.getBoolean("grid_mode", false);
         gridMode.setChecked(gridModeState);
-        // В зависимости от полученного состояния устанавливаем режимы отображения
+
+        // По состоянию полученному из mPreferences отображаем сетку/список
         if (gridModeState) {
             gridMode.setTitle(R.string.list_mode);
             rvContentsMainList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
@@ -125,11 +132,12 @@ public class MainListFragment extends Fragment implements
             gridMode.setTitle(R.string.grid_mode);
             rvContentsMainList.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
+
         // Реализовываем setOnMenuItemClickListener
         gridMode.setOnMenuItemClickListener(this);
 
-        // Получаем доступ к SearchView
         final MenuItem searchItem = menu.findItem(R.id.action_search_by_chapters);
+        // Получаем доступ к SearchView
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         // Реализовываем setOnQueryTextListener
         searchView.setOnQueryTextListener(this);
@@ -137,20 +145,23 @@ public class MainListFragment extends Fragment implements
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        boolean isChecked;
-        item.setChecked(isChecked = !item.isChecked());
+        boolean isCheckedGridMode;
+        item.setChecked(isCheckedGridMode = !item.isChecked());
 
-        if (isChecked) {
-            // Режим сетки активен
-            gridMode.setTitle(R.string.list_mode);
-            rvContentsMainList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        } else {
-            // Режим сетки неактивен
-            gridMode.setTitle(R.string.grid_mode);
-            rvContentsMainList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        switch (item.getItemId()) {
+            case R.id.action_grid_mode:
+                if (isCheckedGridMode) {
+                    // Режим сетки
+                    gridMode.setTitle(R.string.list_mode);
+                    rvContentsMainList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                } else {
+                    // Режим списка
+                    gridMode.setTitle(R.string.grid_mode);
+                    rvContentsMainList.setLayoutManager(new LinearLayoutManager(getActivity()));
+                }
+                // Сохраняем состояние
+                mEditor.putBoolean("grid_mode", isCheckedGridMode).apply();
         }
-        // Сохраняем состояние
-        mEditor.putBoolean("grid_mode", isChecked).apply();
         return true;
     }
 
@@ -172,6 +183,7 @@ public class MainListFragment extends Fragment implements
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Удалем Observer
         updateLists.deleteObservers();
     }
 }

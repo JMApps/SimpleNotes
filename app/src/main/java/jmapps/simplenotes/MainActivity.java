@@ -1,18 +1,23 @@
 package jmapps.simplenotes;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.method.LinkMovementMethod;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import jmapps.simplenotes.Adapter.ListPagesAdapter;
 import jmapps.simplenotes.Database.DatabaseManager;
@@ -21,17 +26,16 @@ import jmapps.simplenotes.Fragment.MainListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
-
     private DatabaseManager databaseManager;
 
-    private MenuItem nightMode;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
 
     @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // По состояние isNightModeEnabled включаем или отключаем ночной режим
         if (MainApplication.getInstance().isNightModeEnabled()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
@@ -58,8 +62,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        // Получаем доступ к пункту меню и задаем ему состояние полученное по mPreferences
-        nightMode = menu.findItem(R.id.action_night_mode);
+        MenuItem nightMode = menu.findItem(R.id.action_night_mode);
+
+        // Задаем для nightModeState состояние полученное из mPreferences по умолчанию false
         boolean nightModeState = mPreferences.getBoolean("night_mode", false);
         nightMode.setChecked(nightModeState);
         return true;
@@ -67,37 +72,28 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        boolean isChecked;
-        item.setChecked(isChecked = !item.isChecked());
+        boolean isCheckedNightMode;
+        item.setChecked(isCheckedNightMode = !item.isChecked());
 
         switch (item.getItemId()) {
             case R.id.action_night_mode:
 
-                if (isChecked) {
+                if (isCheckedNightMode) {
                     // Включаем ночной режим
-                    nightMode.setChecked(true);
-                    MainApplication.getInstance().setIsNightModeEnabled(true);
-                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(0, 0);
+                    recreateActivity(true);
                 } else {
                     // Отключаем ночной режим
-                    nightMode.setChecked(false);
-                    MainApplication.getInstance().setIsNightModeEnabled(false);
-                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(0, 0);
+                    recreateActivity(false);
                 }
 
                 // Сохраняем последнее выбранное состояние
-                mEditor.putBoolean("night_mode", isChecked).apply();
+                mEditor.putBoolean("night_mode", isCheckedNightMode).apply();
 
                 break;
             case R.id.action_about_us:
 
-
+                // Диалоговое окно "О нас"
+                aboutUsDialog();
 
                 break;
             case R.id.action_share:
@@ -108,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_exit:
 
+                // Уничтожаем активити
                 finish();
 
                 break;
@@ -123,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         databaseManager.databaseClose();
     }
 
-    // Получаем объект на ListPagesAdapter и добавляем два фрагмента
+    // Получаем объект ListPagesAdapter и создаем два фрагмента
     private void setupViewPager(ViewPager viewPager) {
         ListPagesAdapter listPagesAdapter = new ListPagesAdapter(getSupportFragmentManager());
         listPagesAdapter.addFragment(new MainListFragment(), "ВСЕ");
@@ -131,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(listPagesAdapter);
     }
 
+    // Метод "Поделиться" ссылкой
     private void shareAppLink() {
         String appLink = "https://play.google.com/store/apps/details?id=jmapps.simplenotes";
 
@@ -138,5 +136,35 @@ public class MainActivity extends AppCompatActivity {
         shareAppLink.setType("text/plain");
         shareAppLink.putExtra(Intent.ACTION_SEND, appLink);
         startActivity(shareAppLink);
+    }
+
+    // Метод пересоздания активити
+    private void recreateActivity(boolean state) {
+        MainApplication.getInstance().setIsNightModeEnabled(state);
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(0, 0);
+    }
+
+    // Метод диалогового окна "О нас"
+    private void aboutUsDialog() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        @SuppressLint("InflateParams")
+        View dialogAboutUs = inflater.inflate(R.layout.dialog_about_us, null);
+
+        AlertDialog.Builder instructionDialog = new AlertDialog.Builder(this);
+
+        instructionDialog.setView(dialogAboutUs);
+        TextView tvAboutUsContent = dialogAboutUs.findViewById(R.id.tv_about_us_content);
+        tvAboutUsContent.setMovementMethod(LinkMovementMethod.getInstance());
+
+        instructionDialog.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        instructionDialog.create().show();
     }
 }

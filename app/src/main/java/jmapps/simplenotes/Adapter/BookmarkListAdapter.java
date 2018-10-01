@@ -22,8 +22,8 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListViewHo
 
     private List<BookmarkListModel> firstBookmarkState;
     private List<BookmarkListModel> mBookmarkListModel;
-    private Context mContext;
-    private LayoutInflater inflater;
+    private final Context mContext;
+    private final LayoutInflater inflater;
 
     public BookmarkListAdapter(List<BookmarkListModel> bookmarkListModel,
                                Context context) {
@@ -45,9 +45,23 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListViewHo
         final String _id = mBookmarkListModel.get(position).get_id();
         final String strBookmarkTitle = mBookmarkListModel.get(position).getBookmarkTitle();
         final String strBookmarkContent = mBookmarkListModel.get(position).getBookmarkContent();
+        final String strGetTimeCreation = mBookmarkListModel.get(position).getTimeCreation();
+        final String strGetTimeChange = mBookmarkListModel.get(position).getTimeChange();
 
         holder.tvBookmarkTitle.setText(strBookmarkTitle);
         holder.tvBookmarkContent.setText(strBookmarkContent);
+        holder.tvAddNoteDate.setText(strGetTimeCreation);
+
+        if (strGetTimeChange != null) {
+            // Если строка strGetTimeChange не пуста
+            holder.tvChangeNoteDate.setVisibility(View.VISIBLE);
+            holder.tvSlash.setVisibility(View.VISIBLE);
+            holder.tvChangeNoteDate.setText(strGetTimeChange);
+        } else {
+            // Если строка strGetTimeChange не пуста
+            holder.tvChangeNoteDate.setVisibility(View.GONE);
+            holder.tvSlash.setVisibility(View.GONE);
+        }
 
         // Устанавливаем слушателя на пункт RecyclerView
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +103,7 @@ public class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListViewHo
                 return oReturn;
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 mBookmarkListModel = (ArrayList<BookmarkListModel>) results.values;

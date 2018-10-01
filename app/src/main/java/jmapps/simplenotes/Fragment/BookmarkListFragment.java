@@ -33,17 +33,16 @@ import jmapps.simplenotes.R;
 public class BookmarkListFragment extends Fragment implements
         MenuItem.OnMenuItemClickListener, SearchView.OnQueryTextListener, Observer {
 
+    private DatabaseManager databaseManager;
+
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
-
-    private DatabaseManager databaseManager;
 
     private TextView tvIsBookmarkListEmpty;
     private RecyclerView rvContentsBookmarkList;
     private BookmarkListAdapter bookmarkListAdapter;
 
     private MenuItem gridMode;
-
     private UpdateLists updateLists;
 
     @SuppressLint("CommitPrefEdits")
@@ -53,7 +52,9 @@ public class BookmarkListFragment extends Fragment implements
 
         View rootBookmarkList = inflater.inflate(R.layout.fragment_bookmark, container, false);
 
+        // Сохраняем данные при смене ориентации экрана
         setRetainInstance(true);
+        // Отображаем пункты меню
         setHasOptionsMenu(true);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -66,6 +67,7 @@ public class BookmarkListFragment extends Fragment implements
         tvIsBookmarkListEmpty = rootBookmarkList.findViewById(R.id.tv_is_bookmark_list_empty);
         rvContentsBookmarkList = rootBookmarkList.findViewById(R.id.rv_contents_bookmark_list);
 
+        // Инициализируем весь список
         initBookmarkChapterList();
 
         // Получаем объект Observer в котором слушатель на изменение в списках
@@ -79,20 +81,23 @@ public class BookmarkListFragment extends Fragment implements
     @Override
     public void update(Observable observable, Object arg) {
         if (observable instanceof UpdateLists) {
-            // Если список был изменен
+            // Если список был изменен инициализируем его повторно
             initBookmarkChapterList();
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_bookmark_fragment, menu);
-        // Получаем доступ к пункту меню и задаем ему состояние полученное по mPreferences
-        gridMode = menu.findItem(R.id.action_grid_list_modes_bookmark);
+        gridMode = menu.findItem(R.id.action_grid_mode_bookmark);
+
+        // Задаем для gridModeState состояние полученное из mPreferences по умолчанию false
         boolean gridModeState = mPreferences.getBoolean("grid_mode_bookmarks", false);
         gridMode.setChecked(gridModeState);
-        // В зависимости от полученного состояния устанавливаем режимы отображения
+
+        // По состоянию полученному из mPreferences отображаем сетку/список
         if (gridModeState) {
             gridMode.setTitle(R.string.list_mode);
             rvContentsBookmarkList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
@@ -100,11 +105,12 @@ public class BookmarkListFragment extends Fragment implements
             gridMode.setTitle(R.string.grid_mode);
             rvContentsBookmarkList.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
+
         // Реализовываем setOnMenuItemClickListener
         gridMode.setOnMenuItemClickListener(this);
 
-        // Получаем доступ к SearchView
         final MenuItem searchItem = menu.findItem(R.id.action_search_by_bookmarks);
+        // Получаем доступ к SearchView
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         // Реализовываем setOnQueryTextListener
         searchView.setOnQueryTextListener(this);
@@ -112,20 +118,20 @@ public class BookmarkListFragment extends Fragment implements
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        boolean isChecked;
-        item.setChecked(isChecked = !item.isChecked());
+        boolean isCheckedGriMode;
+        item.setChecked(isCheckedGriMode = !item.isChecked());
 
-        if (isChecked) {
-            // Режим сетки активен
+        if (isCheckedGriMode) {
+            // Режим сетки
             gridMode.setTitle(R.string.list_mode);
             rvContentsBookmarkList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         } else {
-            // Режим сетки неактивен
+            // Режим списка
             gridMode.setTitle(R.string.grid_mode);
             rvContentsBookmarkList.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
         // Сохраняем состояние
-        mEditor.putBoolean("grid_mode_bookmarks", isChecked).apply();
+        mEditor.putBoolean("grid_mode_bookmarks", isCheckedGriMode).apply();
         return true;
     }
 
@@ -147,9 +153,11 @@ public class BookmarkListFragment extends Fragment implements
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Удалем Observer
         updateLists.deleteObservers();
     }
 
+    // Инициализация списка
     private void initBookmarkChapterList() {
         // Присваиваем MainListModel метод bookmarkListModels из DatabaseManager
         List<BookmarkListModel> bookmarkListModels = databaseManager.getBookmarkList();

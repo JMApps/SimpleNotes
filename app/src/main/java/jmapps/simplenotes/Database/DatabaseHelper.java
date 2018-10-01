@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+class DatabaseHelper extends SQLiteOpenHelper {
 
     // Имя и версия базы данных
     private static final String DBName = "simpleNotes.DB";
@@ -27,7 +27,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + timeChange + " TEXT, " + "Favorite NUMERIC);";
 
     // Создаем переменную со столбцами
-    public static final String[] columns = {_ID, chapterTitle, chapterContent, timeCreation, timeChange};
+    public static final String[] columns = {
+            _ID, chapterTitle, chapterContent, timeCreation, timeChange};
 
     // Создаем конструктор класса DatabaseHelper
     DatabaseHelper(Context context) {

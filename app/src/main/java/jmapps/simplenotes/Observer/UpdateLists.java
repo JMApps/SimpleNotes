@@ -5,7 +5,6 @@ import java.util.Observable;
 public class UpdateLists extends Observable {
 
     private boolean updateAdapterLists;
-
     private static UpdateLists INSTANCE;
 
     public static UpdateLists getInstance() {

@@ -3,11 +3,12 @@ package jmapps.simplenotes.Model;
 public class MainListModel {
 
     // Модель главного списка
-    private String _id;
-    private String chapterTitle;
-    private String chapterContent;
-    private String timeCreation;
-    private String timeChange;
+
+    private final String _id;
+    private final String chapterTitle;
+    private final String chapterContent;
+    private final String timeCreation;
+    private final String timeChange;
 
     public MainListModel(String _id,
                          String chapterTitle,

@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="jmapps.simplenotes">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".MainApplication"
         android:allowBackup="false"
@@ -26,10 +29,7 @@
         <activity
             android:name=".AddNoteActivity"
             android:label="@string/add_note" />
-
-        <activity
-            android:name=".ModifyNoteActivity"
-            android:label="@string/modify_note" />
+        <activity android:name=".ModifyNoteActivity" />
     </application>
 
 </manifest>

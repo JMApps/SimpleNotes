@@ -1,16 +1,16 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Заметки</string>
-    <string name="action_settings">Настройки</string>
+    <string name="action_settings" tools:keep="@string/action_settings">Настройки</string>
     <string name="add_note">Добавить</string>
     <string name="modify_note">Изменить</string>
     <string name="chapter_title">Название</string>
     <string name="without_chapter_title">Без названия</string>
     <string name="chapter_content">Текст…</string>
     <string name="without_chapter_content">Без текста…</string>
-    <string name="add">Добавить</string>
+    <string name="add" tools:keep="@string/add">Добавить</string>
     <string name="add_in_bookmark">Добавить в избранное</string>
     <string name="save_note">Сохранить</string>
-    <string name="delete_note">Удалить</string>
+    <string name="delete_note" tools:keep="@string/delete_note">Удалить</string>
     <string name="search_by_list">Поиск по списку</string>
     <string name="night_mode">Ночной режим</string>
     <string name="grid_mode">Сетка</string>
@@ -23,8 +23,21 @@
     <string name="cancel">Отмена</string>
     <string name="delete">Удалить</string>
     <string name="save">Сохранить</string>
+    <string name="slash"> / </string>
     <string name="note_added">Заметка добавлена</string>
+    <string name="note_change">Заметка изменена</string>
     <string name="note_deleted">Заметка удалена</string>
-    <string name="first_note_added">Добавьте первую заметку</string>
+    <string name="first_note_added">Добавьте первую заметку <b>+</b></string>
     <string name="first_bookmark_added">Добавьте первую закладку</string>
+
+    <string name="about_us_text">
+
+        <b>JMApps</b> — серия бесплатных андроид-приложений для мусульман.
+        Наши приложения всегда будут <b>бесплатными</b> и <b>без</b> какой-либо <b>рекламы</b>.\n \n
+        Вы можете следить за обновлением старых и изданием новых приложений в нашей группе в ВКонтакте:\n
+        www.vk.com/JMApps и на нашем канале в Telegram:\n t.me/JMApps. \n\n
+        Если же у вас возникнут вопросы, или появятся предложения или критика, можете написать нам
+        на почту: jmappsmuslim@gmail.com, или в Telegram: t.me/JMbikk
+
+    </string>
 </resources>

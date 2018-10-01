@@ -19,7 +19,7 @@ import jmapps.simplenotes.Model.MainListModel;
 public class DatabaseManager {
 
     private DatabaseHelper databaseHelper;
-    private Context context;
+    private final Context context;
     private SQLiteDatabase sqLiteDatabase;
 
     public DatabaseManager(Context ctx) {
@@ -67,7 +67,7 @@ public class DatabaseManager {
                 DatabaseHelper._ID + "=" + _id, null);
     }
 
-    // Метод удаления пункта базы данных
+    // Метод удаления пункта базы данных по ID пункта
     public void databaseDeleteItem(int _id) {
         sqLiteDatabase.delete(DatabaseHelper.tableName,
                 DatabaseHelper._ID + "=" + _id, null);
@@ -97,7 +97,6 @@ public class DatabaseManager {
         }
         return allMainList;
     }
-
 
     // Создание списка избранных пунктов получаемого из базы данных
     public List<BookmarkListModel> getBookmarkList() {
