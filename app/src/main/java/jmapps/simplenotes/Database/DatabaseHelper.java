@@ -17,14 +17,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String _ID = "_id";
     public static final String chapterTitle = "chapter_title";
     public static final String chapterContent = "chapter_content";
+    public static final String timeCreation = "time_creation";
+    public static final String timeChange = "time_change";
 
     // Создаем таблицу
     private static final String createTable = "CREATE TABLE " + tableName + "(" + _ID +
             " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + chapterTitle + " TEXT, " + chapterContent + " TEXT, " + "Favorite NUMERIC);";
+            + chapterTitle + " TEXT, " + chapterContent + " TEXT, " + timeCreation + " TEXT, "
+            + timeChange + " TEXT, " + "Favorite NUMERIC);";
 
     // Создаем переменную со столбцами
-    public static final String[] columns = {_ID, chapterTitle, chapterContent};
+    public static final String[] columns = {_ID, chapterTitle, chapterContent, timeCreation, timeChange};
 
     // Создаем конструктор класса DatabaseHelper
     DatabaseHelper(Context context) {

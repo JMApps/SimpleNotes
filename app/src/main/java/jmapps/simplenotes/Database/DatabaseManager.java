@@ -3,13 +3,14 @@ package jmapps.simplenotes.Database;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jmapps.simplenotes.Model.BookmarkListModel;
@@ -39,10 +40,37 @@ public class DatabaseManager {
 
     // Метод вставки содержимого в пункт базы данных
     public void databaseInsertItem(String chapterTitle, String chapterContent) {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F MMM yyyy HH:mm");
+        String timeCreation = simpleDateFormat.format(new Date(System.currentTimeMillis()));
+
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseHelper.chapterTitle, chapterTitle);
         contentValues.put(DatabaseHelper.chapterContent, chapterContent);
+        contentValues.put("time_creation", "Создано: " + timeCreation);
         sqLiteDatabase.insert(DatabaseHelper.tableName, null, contentValues);
+    }
+
+    // Метод обновления пункта базы данных
+    public void databaseUpdateItem(int _id, String chapterTitle, String chapterContent) {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F MMM yyyy HH:mm");
+        String timeChange = simpleDateFormat.format(new Date(System.currentTimeMillis()));
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseHelper._ID, _id);
+        contentValues.put(DatabaseHelper.chapterTitle, chapterTitle);
+        contentValues.put(DatabaseHelper.chapterContent, chapterContent);
+        contentValues.put(DatabaseHelper.chapterContent, chapterContent);
+        contentValues.put("time_change", "Изменено: " + timeChange);
+        sqLiteDatabase.update(DatabaseHelper.tableName, contentValues,
+                DatabaseHelper._ID + "=" + _id, null);
+    }
+
+    // Метод удаления пункта базы данных
+    public void databaseDeleteItem(int _id) {
+        sqLiteDatabase.delete(DatabaseHelper.tableName,
+                DatabaseHelper._ID + "=" + _id, null);
     }
 
     // Создание главного списка пунктов получаемого из базы данных
@@ -61,7 +89,9 @@ public class DatabaseManager {
                 allMainList.add(new MainListModel(
                         cursor.getString(cursor.getColumnIndex(DatabaseHelper._ID)),
                         cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterTitle)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterContent))));
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterContent)),
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.timeCreation)),
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.timeChange))));
                 cursor.moveToNext();
             }
         }
@@ -85,7 +115,9 @@ public class DatabaseManager {
                 allBookmarkList.add(new BookmarkListModel(
                         cursor.getString(cursor.getColumnIndex(DatabaseHelper._ID)),
                         cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterTitle)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterContent))));
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterContent)),
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.timeCreation)),
+                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.timeChange))));
                 cursor.moveToNext();
             }
         }
@@ -107,22 +139,5 @@ public class DatabaseManager {
                 contentValues,
                 "_id = ?",
                 new String[]{String.valueOf(_id)});
-    }
-
-    // Метод обновления пункта базы данных
-    public void databaseUpdateItem(int _id, String chapterTitle,
-                                   String chapterContent) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseHelper._ID, _id);
-        contentValues.put(DatabaseHelper.chapterTitle, chapterTitle);
-        contentValues.put(DatabaseHelper.chapterContent, chapterContent);
-        sqLiteDatabase.update(DatabaseHelper.tableName, contentValues,
-                DatabaseHelper._ID + "=" + _id, null);
-    }
-
-    // Метод удаления пункта базы данных
-    public void databaseDeleteItem(int _id) {
-        sqLiteDatabase.delete(DatabaseHelper.tableName,
-                DatabaseHelper._ID + "=" + _id, null);
     }
 }
