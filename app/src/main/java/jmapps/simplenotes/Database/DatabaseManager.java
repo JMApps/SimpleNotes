@@ -38,7 +38,7 @@ public class DatabaseManager {
     }
 
 
-    // Метод вставки содержимого в пункт базы данных
+    // Метод вставки содержимого в пункт базы данных вместе с датой
     public void databaseInsertItem(String chapterTitle, String chapterContent) {
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F MMM yyyy HH:mm");
@@ -51,7 +51,7 @@ public class DatabaseManager {
         sqLiteDatabase.insert(DatabaseHelper.tableName, null, contentValues);
     }
 
-    // Метод обновления пункта базы данных
+    // Метод обновления пункта базы данных вместе с датой
     public void databaseUpdateItem(int _id, String chapterTitle, String chapterContent) {
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F MMM yyyy HH:mm");

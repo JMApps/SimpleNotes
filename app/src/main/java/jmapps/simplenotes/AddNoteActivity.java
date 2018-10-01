@@ -176,7 +176,7 @@ public class AddNoteActivity extends AppCompatActivity implements
         }
     }
 
-    // Добавить конечный вариант в базу данных
+    // Добавляем конечный вариант в базу данных
     @SuppressLint("SimpleDateFormat")
     private void addNote() {
         getTextFromEditTexts();

@@ -2,8 +2,7 @@ package jmapps.simplenotes.Model;
 
 public class BookmarkListModel {
 
-    // Модель главного списка
-
+    // Модель списка закладок
     private String _id;
     private String bookmarkTitle;
     private String bookmarkContent;
