@@ -1,5 +1,6 @@
 package jmapps.simplenotes.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -39,15 +40,26 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> im
         return new MainListViewHolder(rootMainList);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MainListViewHolder holder, final int position) {
 
         final String _id = mMainListModel.get(position).get_id();
         final String strChapterTitle = mMainListModel.get(position).getChapterTitle();
         final String strChapterContent = mMainListModel.get(position).getChapterContent();
+        final String strGetTimeCreation = mMainListModel.get(position).getTimeCreation();
+        final String strGetTimeChange = mMainListModel.get(position).getTimeChange();
 
         holder.tvChapterTitle.setText(strChapterTitle);
         holder.tvChapterContent.setText(strChapterContent);
+        holder.tvAddNoteDate.setText(strGetTimeCreation);
+
+        if (strGetTimeChange != null) {
+            holder.tvChangeNoteDate.setVisibility(View.VISIBLE);
+            holder.tvChangeNoteDate.setText(" / " + strGetTimeChange);
+        } else {
+            holder.tvChangeNoteDate.setVisibility(View.GONE);
+        }
 
         // Устанавливаем слушателя на пункт RecyclerView
         holder.itemView.setOnClickListener(new View.OnClickListener() {

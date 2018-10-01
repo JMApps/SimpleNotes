@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
+        android:focusableInTouchMode="true"
         android:hint="@string/chapter_title"
         android:imeOptions="actionDone"
         android:inputType="text"
@@ -32,6 +33,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@null"
+        android:focusableInTouchMode="true"
         android:gravity="start"
         android:hint="@string/chapter_content"
         android:imeOptions="actionDone" />

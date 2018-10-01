@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -19,7 +21,8 @@ import android.widget.Toast;
 
 import jmapps.simplenotes.Database.DatabaseManager;
 
-public class AddNoteActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
+public class AddNoteActivity extends AppCompatActivity implements
+        TextView.OnEditorActionListener, View.OnTouchListener {
 
     private DatabaseManager databaseManager;
 
@@ -34,7 +37,7 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
 
     private boolean questionDialogState = false;
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint({"CommitPrefEdits", "ClickableViewAccessibility"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,13 +52,20 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         etAddChapterTitle = findViewById(R.id.et_add_chapter_title);
         etAddChapterContent = findViewById(R.id.et_add_chapter_content);
 
+        // Слушатель для получения доступа к кнопку "Enter" у клавиатуры
         etAddChapterTitle.setOnEditorActionListener(this);
+
+        // Слушатель на касание по полям EditText
+        etAddChapterTitle.setOnTouchListener(this);
+        etAddChapterContent.setOnTouchListener(this);
 
         openKeyboard();
     }
 
     @Override
     public void onBackPressed() {
+        // Если questionDialogState не равен true, проверяем поля на наличие текста
+        // Если нет текста, закрываем активити, если есть текст, предлагаем сохранить или удалить его
         if (!questionDialogState) {
             getTextFromEditTexts();
             if (!strChapterTitle.isEmpty() || !strChapterContent.isEmpty()) {
@@ -63,6 +73,8 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
             } else {
                 finish();
             }
+            // Если же questionDialogState равен true, проверяем поля на наличие текста
+            // Если есть текст, добавляем его в базу данных, если его нет, закрываем активити
         } else {
             super.onBackPressed();
             addNote();
@@ -84,7 +96,7 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         switch (item.getItemId()) {
             case R.id.action_add_change:
                 if (isChecked) {
-                    // Сохранить заметку
+                    // Добавить заметку
                     saveNote();
                     questionDialogState = true;
                 } else {
@@ -94,7 +106,7 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
                 }
                 break;
             case android.R.id.home:
-
+                // Добавить заметку
                 addNote();
 
                 break;
@@ -103,6 +115,8 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         return super.onOptionsItemSelected(item);
     }
 
+    // Если фокус на первом поле и нажать интер, убираем из него фокус
+    // и передаем фокус нижнему полю
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         boolean handled = false;
@@ -117,6 +131,25 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         return handled;
     }
 
+    // При клике на любое из двух полей будет вызван метод modifyItem()
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId()) {
+            case R.id.et_add_chapter_title:
+                addChangeNote.setChecked(false);
+                modifyItem();
+                questionDialogState = false;
+                break;
+            case R.id.et_add_chapter_content:
+                addChangeNote.setChecked(false);
+                modifyItem();
+                questionDialogState = false;
+        }
+        return false;
+    }
+
+    // Добавить заметку
     private void saveNote() {
         getTextFromEditTexts();
         if (!strChapterTitle.isEmpty() || !strChapterContent.isEmpty()) {
@@ -129,6 +162,7 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         }
     }
 
+    // Изменить заметку
     private void modifyItem() {
         getTextFromEditTexts();
         if (!strChapterTitle.isEmpty() || !strChapterContent.isEmpty()) {
@@ -142,6 +176,8 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         }
     }
 
+    // Добавить конечный вариант в базу данных
+    @SuppressLint("SimpleDateFormat")
     private void addNote() {
         getTextFromEditTexts();
         if (!strChapterTitle.isEmpty() || !strChapterContent.isEmpty()) {
@@ -153,6 +189,7 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         }
     }
 
+    // Диалоговое окно с предупреждение о сохранении введенного текста
     private void questionDialog() {
         final AlertDialog.Builder questionDialog = new AlertDialog.Builder(this);
 
@@ -161,12 +198,16 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         questionDialog.setMessage(R.string.question_save_note);
         questionDialog.setCancelable(false);
 
+
+        // Обработчик варианта "Сохранить"
         questionDialog.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 addNote();
             }
         });
+
+        // Обработчик варианта "Удалить"
         questionDialog.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -174,6 +215,8 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
                 Toast.makeText(AddNoteActivity.this, R.string.note_deleted, Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Обработчик варианта "Отмена"
         questionDialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -182,6 +225,7 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         questionDialog.create().show();
     }
 
+    // Отображаем клаиатуру с фокусом на etAddChapterContent
     private void openKeyboard() {
         etAddChapterContent.requestFocus();
         etAddChapterContent.postDelayed(new Runnable() {
@@ -196,6 +240,7 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         }, 200);
     }
 
+    // Скрываем клавиатуру
     private void closeKeyboard() {
         etAddChapterContent.postDelayed(new Runnable() {
             @Override
@@ -210,17 +255,20 @@ public class AddNoteActivity extends AppCompatActivity implements TextView.OnEdi
         }, 200);
     }
 
+    // Возвращаемся к главной активти
     private void returnMainActivity() {
         Intent toMainList = new Intent(AddNoteActivity.this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(toMainList);
     }
 
+    // Получаем введенные в EditText данные
     private void getTextFromEditTexts() {
         strChapterTitle = etAddChapterTitle.getText().toString();
         strChapterContent = etAddChapterContent.getText().toString();
     }
 
+    // Убираем фокус
     private void clearFocusEditTexts() {
         etAddChapterTitle.clearFocus();
         etAddChapterContent.clearFocus();

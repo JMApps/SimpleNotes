@@ -7,11 +7,19 @@ public class MainListModel {
     private String _id;
     private String chapterTitle;
     private String chapterContent;
+    private String timeCreation;
+    private String timeChange;
 
-    public MainListModel(String _id, String chapterTitle, String chapterContent) {
+    public MainListModel(String _id,
+                         String chapterTitle,
+                         String chapterContent,
+                         String timeCreation,
+                         String timeChange) {
         this._id = _id;
         this.chapterTitle = chapterTitle;
         this.chapterContent = chapterContent;
+        this.timeCreation = timeCreation;
+        this.timeChange = timeChange;
     }
 
     public String get_id() {
@@ -24,5 +32,13 @@ public class MainListModel {
 
     public String getChapterContent() {
         return chapterContent;
+    }
+
+    public String getTimeCreation() {
+        return timeCreation;
+    }
+
+    public String getTimeChange() {
+        return timeChange;
     }
 }
