@@ -5,9 +5,10 @@
 
     <item
         android:id="@+id/action_change_save"
+        android:checkable="true"
         android:checked="false"
-        android:orderInCategory="1"
         android:icon="@drawable/ic_edit"
+        android:orderInCategory="1"
         android:title="@string/modify_note"
         app:showAsAction="always" />
 

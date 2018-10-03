@@ -75,11 +75,9 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnFocusCh
                 if (isCheckedAddChange) {
                     // Добавить заметку
                     saveNote();
-                    addChangeNote.setIcon(R.drawable.ic_edit);
                 } else {
                     // Изменить заметку
                     modifyItem(etAddChapterContent);
-                    addChangeNote.setIcon(R.drawable.ic_save);
                 }
                 break;
             case R.id.action_delete:
@@ -144,6 +142,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnFocusCh
             clearFocusEditTexts();
             // Задаем состояние для addChangeNote
             addChangeNote.setChecked(true);
+            // Меняем картинку
+            addChangeNote.setIcon(R.drawable.ic_edit);
             // Меняем заговок на "Изменить"
             addChangeNote.setTitle(R.string.modify_note);
             // Скрываем клавиатуру
@@ -167,6 +167,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnFocusCh
             editText.requestFocus();
             // Задаем состояние для addChangeNote
             addChangeNote.setChecked(false);
+            // Меняем картинку
+            addChangeNote.setIcon(R.drawable.ic_save);
             // Меняем заговок на "Сохранить"
             addChangeNote.setTitle(R.string.save_note);
             // Переходим в конец текста

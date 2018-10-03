@@ -116,11 +116,9 @@ public class ModifyNoteActivity extends AppCompatActivity implements View.OnFocu
                 if (isCheckedChangeNote) {
                     // Изменить заметку. Фокус на содержимое
                     modifyItem(etModifyChapterContent);
-                    changeSaveNote.setIcon(R.drawable.ic_save);
                 } else {
                     // Сохранить заметку
                     saveNote();
-                    changeSaveNote.setIcon(R.drawable.ic_edit);
                 }
                 break;
 
@@ -234,6 +232,8 @@ public class ModifyNoteActivity extends AppCompatActivity implements View.OnFocu
         editText.requestFocus();
         // Задаем состояние для addChangeNote
         changeSaveNote.setChecked(true);
+        // Меняем картинку
+        changeSaveNote.setIcon(R.drawable.ic_save);
         // Меняем заговок на "Сохранить"
         changeSaveNote.setTitle(R.string.save_note);
         // Переходим в конец текста
@@ -253,6 +253,8 @@ public class ModifyNoteActivity extends AppCompatActivity implements View.OnFocu
             clearFocusEditTexts();
             // Задаем состояние для addChangeNote
             changeSaveNote.setChecked(false);
+            // Меняем картинку
+            changeSaveNote.setIcon(R.drawable.ic_edit);
             // Меняем заговок на "Изменить"
             changeSaveNote.setTitle(R.string.modify_note);
             // Скрываем клавиатуру

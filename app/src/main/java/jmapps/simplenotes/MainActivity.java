@@ -130,13 +130,15 @@ public class MainActivity extends AppCompatActivity {
 
     // Метод "Поделиться" ссылкой
     private void shareAppLink() {
-        String appLink = "https://play.google.com/store/apps/details?id=jmapps.simplenotes";
-
         Intent shareAppLink = new Intent(Intent.ACTION_SEND);
         shareAppLink.setType("text/plain");
-        shareAppLink.putExtra(Intent.ACTION_SEND, appLink);
+        shareAppLink.putExtra(Intent.EXTRA_TEXT, getString(R.string.app_name) + "\n" +
+                "https://play.google.com/store/apps/details?id=jmapps.simplenotes");
+        shareAppLink.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        shareAppLink = Intent.createChooser(shareAppLink, getString(R.string.share_to));
         startActivity(shareAppLink);
     }
+
 
     // Метод пересоздания активити
     private void recreateActivity(boolean state) {

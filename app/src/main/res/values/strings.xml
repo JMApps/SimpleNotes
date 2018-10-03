@@ -17,6 +17,7 @@
     <string name="list_mode">Список</string>
     <string name="about_us">О нас</string>
     <string name="share">Поделиться</string>
+    <string name="share_to">Поделиться через</string>
     <string name="exit">Выход</string>
     <string name="warning">Предупреждение</string>
     <string name="question_save_note">Сохранить заметку перед выходом?</string>
