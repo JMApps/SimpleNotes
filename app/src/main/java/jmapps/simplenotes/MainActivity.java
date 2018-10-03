@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
     }
 
+
     // Метод диалогового окна "О нас"
     private void aboutUsDialog() {
         LayoutInflater inflater = LayoutInflater.from(this);
