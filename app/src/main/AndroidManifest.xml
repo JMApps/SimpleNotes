@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:windowSoftInputMode="adjustResize"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
             android:name=".MainActivity"
@@ -28,8 +29,13 @@
         </activity>
         <activity
             android:name=".AddNoteActivity"
-            android:label="@string/add_note" />
-        <activity android:name=".ModifyNoteActivity" />
+            android:label="@string/add_note"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity
+            android:name=".ModifyNoteActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

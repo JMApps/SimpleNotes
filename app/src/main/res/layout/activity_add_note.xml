@@ -1,41 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".AddNoteActivity">
+    tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/et_add_chapter_title"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@null"
-        android:focusableInTouchMode="true"
-        android:hint="@string/chapter_title"
-        android:imeOptions="actionDone"
-        android:inputType="text"
-        android:textStyle="bold" />
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.6dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/main" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_add_note"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    <EditText
-        android:id="@+id/et_add_chapter_content"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@null"
-        android:focusableInTouchMode="true"
-        android:gravity="start"
-        android:hint="@string/chapter_content"
-        android:imeOptions="actionDone"
-        android:inputType="text" />
-</LinearLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_add_note" />
+
+</android.support.design.widget.CoordinatorLayout>

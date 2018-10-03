@@ -86,7 +86,6 @@ public class BookmarkListFragment extends Fragment implements
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);

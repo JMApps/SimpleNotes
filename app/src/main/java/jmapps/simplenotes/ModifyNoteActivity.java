@@ -10,23 +10,19 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import jmapps.simplenotes.Database.DatabaseManager;
 import jmapps.simplenotes.Observer.UpdateLists;
 
-public class ModifyNoteActivity extends AppCompatActivity implements
-        TextView.OnEditorActionListener, View.OnTouchListener {
+public class ModifyNoteActivity extends AppCompatActivity implements View.OnFocusChangeListener {
 
     private DatabaseManager databaseManager;
 
@@ -54,6 +50,13 @@ public class ModifyNoteActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_note);
 
+        Toolbar toolbarAddNote = findViewById(R.id.toolbar_modify_note);
+        setSupportActionBar(toolbarAddNote);
+
+        // Создаем объект DatabaseManager и открываем базу данных
+        databaseManager = new DatabaseManager(this);
+        databaseManager.databaseOpen();
+
         // Добавляем в Toolbar кнопку "Назад"
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -68,10 +71,6 @@ public class ModifyNoteActivity extends AppCompatActivity implements
         strGetChapterContent = intent.getStringExtra("chapter_content");
         _id = Integer.parseInt(strId);
 
-        // Создаем объект DatabaseManager и открываем базу данных
-        databaseManager = new DatabaseManager(this);
-        databaseManager.databaseOpen();
-
         // Реализовываем PreferenceManager и SharedPreferences.Editor
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
@@ -83,12 +82,9 @@ public class ModifyNoteActivity extends AppCompatActivity implements
         etModifyChapterTitle.setText(strGetChapterTitle);
         etModifyChapterContent.setText(strGetChapterContent);
 
-        // Слушатель для получения доступа к кнопке "Enter" у клавиатуры
-        etModifyChapterTitle.setOnEditorActionListener(this);
-
         // Слушатель на касание по полям EditText
-        etModifyChapterTitle.setOnTouchListener(this);
-        etModifyChapterContent.setOnTouchListener(this);
+        etModifyChapterTitle.setOnFocusChangeListener(this);
+        etModifyChapterContent.setOnFocusChangeListener(this);
     }
 
     @Override
@@ -112,22 +108,19 @@ public class ModifyNoteActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        boolean isCheckedBookmark;
-        boolean isCheckedChangeNote;
-        // Задаем для addDeleteBookmarkNote состояние isCheckedBookmark
-        // Состояние же isCheckedBookmark противположно текущему состоянию addDeleteBookmarkNote
-        addDeleteBookmarkNote.setChecked(isCheckedBookmark = !addDeleteBookmarkNote.isChecked());
-        // Аналогично и для changeSaveNote
-        changeSaveNote.setChecked(isCheckedChangeNote = !changeSaveNote.isChecked());
+        boolean isCheckedBookmark = !addDeleteBookmarkNote.isChecked();
+        boolean isCheckedChangeNote = !changeSaveNote.isChecked();
 
         switch (item.getItemId()) {
             case R.id.action_change_save:
-                if (!isCheckedChangeNote) {
-                    // Изменить заметку
-                    modifyItem();
+                if (isCheckedChangeNote) {
+                    // Изменить заметку. Фокус на содержимое
+                    modifyItem(etModifyChapterContent);
+                    changeSaveNote.setIcon(R.drawable.ic_save);
                 } else {
                     // Сохранить заметку
                     saveNote();
+                    changeSaveNote.setIcon(R.drawable.ic_edit);
                 }
                 break;
 
@@ -164,7 +157,7 @@ public class ModifyNoteActivity extends AppCompatActivity implements
 
             case R.id.action_modify_note_delete:
                 // Удаляем пункт
-                deleteItem();
+                questionDeleteDialog();
                 break;
 
             case android.R.id.home:
@@ -176,7 +169,7 @@ public class ModifyNoteActivity extends AppCompatActivity implements
                         if (!strChapterTitle.equals(strGetChapterTitle)
                                 || !strChapterContent.equals(strGetChapterContent)) {
                             // Если не равны, вызываем диалоговое окно
-                            questionDialog();
+                            questionSaveChangesDialog();
                         } else {
                             // Если равны (то есть не было изменений) закрываем активити
                             finish();
@@ -203,7 +196,7 @@ public class ModifyNoteActivity extends AppCompatActivity implements
                 if (!strChapterTitle.equals(strGetChapterTitle)
                         || !strChapterContent.equals(strGetChapterContent)) {
                     // Если не равны, вызываем диалоговое окно
-                    questionDialog();
+                    questionSaveChangesDialog();
                 } else {
                     // Если равны (то есть не было изменений) закрываем активити
                     super.onBackPressed();
@@ -217,43 +210,38 @@ public class ModifyNoteActivity extends AppCompatActivity implements
         }
     }
 
-    // Если фокус на первом EditText по нажатию на "Enter" перекидываем фокус к нижнему EditText
     @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        boolean handled = false;
+    public void onFocusChange(View v, boolean hasFocus) {
         switch (v.getId()) {
             case R.id.et_modify_chapter_title:
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    // Удаляем фокус
-                    etModifyChapterTitle.clearFocus();
-                    // Устанавливаем фокус
-                    etModifyChapterContent.requestFocus();
-                    handled = true;
+                if (hasFocus) {
+                    // Изменить название заметки
+                    modifyItem(etModifyChapterTitle);
                 }
-        }
-        return handled;
-    }
-
-    // При клике на любое из двух полей будет вызываем метод modifyItem()
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (v.getId()) {
-            case R.id.et_modify_chapter_title:
-                changeSaveNote.setChecked(false);
-                modifyItem();
                 break;
             case R.id.et_modify_chapter_content:
-                changeSaveNote.setChecked(false);
-                modifyItem();
+                if (hasFocus) {
+                    // Изменить содержимое заметки
+                    modifyItem(etModifyChapterContent);
+                }
+                break;
         }
-        return false;
     }
 
     // Изменить заметку
-    private void modifyItem() {
+    private void modifyItem(EditText editText) {
+        // Получаем фокус текущего EditText
+        editText.requestFocus();
+        // Задаем состояние для addChangeNote
+        changeSaveNote.setChecked(true);
+        // Меняем заговок на "Сохранить"
         changeSaveNote.setTitle(R.string.save_note);
-        openKeyboard();
+        // Переходим в конец текста
+        editText.setSelection(editText.getText().length());
+        // Отображаем клавиатуру с фокусом на текущий EditText
+        openKeyboard(editText);
+        // При попытке выйти будет вызвано диалоговое окно
+        savedState = false;
     }
 
     // Добавить заметку
@@ -261,14 +249,18 @@ public class ModifyNoteActivity extends AppCompatActivity implements
         getTextFromEditTexts();
         // Если поля обоих или одного EditText не пусты
         if (!strChapterTitle.isEmpty() || !strChapterContent.isEmpty()) {
-            // Меняем заговок на "Изменить"
-            changeSaveNote.setTitle(R.string.modify_note);
             // Удаляем фокус с обоих EditText
             clearFocusEditTexts();
+            // Задаем состояние для addChangeNote
+            changeSaveNote.setChecked(false);
+            // Меняем заговок на "Изменить"
+            changeSaveNote.setTitle(R.string.modify_note);
             // Скрываем клавиатуру
             closeKeyboard();
-            strGetChapterTitle = strChapterTitle;
-            strGetChapterContent = strChapterContent;
+            // Присваиваем новые значения старым
+            strChapterTitle = strGetChapterTitle;
+            strChapterContent = strGetChapterContent;
+            // Делаем не нужным вызов диалога
             savedState = true;
         } else {
             // Если поля обоих или одного EditText пусты удаляем текущий пункт
@@ -299,12 +291,12 @@ public class ModifyNoteActivity extends AppCompatActivity implements
     }
 
     // Диалоговое окно с предложением сохранить или удалить данные
-    private void questionDialog() {
+    private void questionSaveChangesDialog() {
         final AlertDialog.Builder questionDialog = new AlertDialog.Builder(this);
 
         questionDialog.setIcon(R.drawable.ic_warning);
         questionDialog.setTitle(R.string.warning);
-        questionDialog.setMessage(R.string.question_save_note);
+        questionDialog.setMessage(R.string.question_save_changes);
         questionDialog.setCancelable(false);
 
         // Обработчик варианта "Сохранить"
@@ -315,33 +307,59 @@ public class ModifyNoteActivity extends AppCompatActivity implements
             }
         });
 
-        // Обработчик варианта "Удалить"
-        questionDialog.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
+        // Обработчик варианта "Не сохранять"
+        questionDialog.setNegativeButton(R.string.not_save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        // Обработчик варианта "Отмена"
+        questionDialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        questionDialog.create().show();
+    }
+
+    // Диалоговое окно с предложением сохранить или удалить данные
+    private void questionDeleteDialog() {
+        final AlertDialog.Builder questionDialog = new AlertDialog.Builder(this);
+
+        questionDialog.setIcon(R.drawable.ic_warning);
+        questionDialog.setTitle(R.string.warning);
+        questionDialog.setMessage(R.string.question_delete_note);
+        questionDialog.setCancelable(false);
+
+        // Обработчик варианта "Сохранить"
+        questionDialog.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteItem();
             }
         });
 
-        // Обработчик варианта "Отмена"
-        questionDialog.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        // Обработчик варианта "Удалить"
+        questionDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
             }
         });
         questionDialog.create().show();
     }
 
     // Отображаем клаиатуру с фокусом на etAddChapterContent
-    private void openKeyboard() {
-        etModifyChapterContent.requestFocus();
-        etModifyChapterContent.postDelayed(new Runnable() {
+    private void openKeyboard(final EditText editText) {
+        editText.postDelayed(new Runnable() {
             @Override
             public void run() {
                 InputMethodManager keyboard = (InputMethodManager)
                         getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (keyboard != null) {
-                    keyboard.showSoftInput(etModifyChapterContent, 0);
+                    keyboard.showSoftInput(editText, 0);
                 }
             }
         }, 200);
@@ -377,6 +395,10 @@ public class ModifyNoteActivity extends AppCompatActivity implements
 
     // Убираем фокус
     private void clearFocusEditTexts() {
+        // Переходим в начало текста
+        etModifyChapterTitle.setSelection(0);
+        etModifyChapterContent.setSelection(0);
+        // Очищаем фокус
         etModifyChapterTitle.clearFocus();
         etModifyChapterContent.clearFocus();
     }

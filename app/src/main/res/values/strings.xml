@@ -20,9 +20,12 @@
     <string name="exit">Выход</string>
     <string name="warning">Предупреждение</string>
     <string name="question_save_note">Сохранить заметку перед выходом?</string>
+    <string name="question_save_changes">Сохранить изменения перед выходом?</string>
+    <string name="question_delete_note">Удалить заметку?</string>
     <string name="cancel">Отмена</string>
     <string name="delete">Удалить</string>
     <string name="save">Сохранить</string>
+    <string name="not_save">Не сохранять</string>
     <string name="slash"> / </string>
     <string name="note_added">Заметка добавлена</string>
     <string name="note_change">Заметка изменена</string>
