@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
 
+
         databaseManager = new DatabaseManager(this);
         databaseManager.databaseOpen();
 
