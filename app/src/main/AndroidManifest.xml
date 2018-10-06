@@ -9,6 +9,7 @@
     <application
         android:name=".MainApplication"
         android:allowBackup="false"
+        android:alwaysRetainTaskState="true"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,14 +29,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddNoteActivity"
+            android:name=".AddMainNoteActivity"
+            android:alwaysRetainTaskState="true"
             android:label="@string/add_note"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
-            android:name=".ModifyNoteActivity"
+            android:name=".ModifyMainNoteActivity"
+            android:alwaysRetainTaskState="true"
+            android:label="@string/modify_note"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="stateUnchanged|adjustResize" />
+        <activity
+            android:name=".CategoryContentActivity"
+            android:alwaysRetainTaskState="true"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ModifyCategoryNoteActivity"
+            android:alwaysRetainTaskState="true"
+            android:label="@string/modify_note"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateUnchanged|adjustResize" />
+        <activity
+            android:name=".AddCategoryNoteActivity"
+            android:alwaysRetainTaskState="true"
+            android:label="@string/add_note"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
     </application>
 
 </manifest>

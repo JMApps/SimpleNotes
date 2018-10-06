@@ -21,12 +21,14 @@ import android.widget.TextView;
 
 import jmapps.simplenotes.Adapter.ListPagesAdapter;
 import jmapps.simplenotes.Database.DatabaseManager;
-import jmapps.simplenotes.Fragment.BookmarkListFragment;
-import jmapps.simplenotes.Fragment.MainListFragment;
+import jmapps.simplenotes.Fragment.CategoryListFragment;
+import jmapps.simplenotes.Fragment.FavoriteListFragment;
+import jmapps.simplenotes.Fragment.MainItemListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private DatabaseManager databaseManager;
+    private ListPagesAdapter listPagesAdapter;
 
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tlPages = findViewById(R.id.tl_pages);
         tlPages.setupWithViewPager(vpContainerForPages);
+
+        vpContainerForPages.setCurrentItem(1);
     }
 
     @Override
@@ -122,9 +126,10 @@ public class MainActivity extends AppCompatActivity {
 
     // Получаем объект ListPagesAdapter и создаем два фрагмента
     private void setupViewPager(ViewPager viewPager) {
-        ListPagesAdapter listPagesAdapter = new ListPagesAdapter(getSupportFragmentManager());
-        listPagesAdapter.addFragment(new MainListFragment(), "ВСЕ");
-        listPagesAdapter.addFragment(new BookmarkListFragment(), "ИЗБРАННЫЕ");
+        listPagesAdapter = new ListPagesAdapter(getSupportFragmentManager());
+        listPagesAdapter.addFragment(new CategoryListFragment(), "КАТЕГОРИИ");
+        listPagesAdapter.addFragment(new MainItemListFragment(), "ВСЕ");
+        listPagesAdapter.addFragment(new FavoriteListFragment(), "ИЗБРАННЫЕ");
         viewPager.setAdapter(listPagesAdapter);
     }
 
@@ -139,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(shareAppLink);
     }
 
-
     // Метод пересоздания активити
     private void recreateActivity(boolean state) {
         MainApplication.getInstance().setIsNightModeEnabled(state);
@@ -148,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
         finish();
         overridePendingTransition(0, 0);
     }
-
 
     // Метод диалогового окна "О нас"
     private void aboutUsDialog() {

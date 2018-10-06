@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:drawablePadding="8dp"
+        android:drawableStart="@drawable/ic_edit_category"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:singleLine="true"
+        android:text="@string/rename_category"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/et_rename_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="@string/category_name"
+        android:inputType="textShortMessage"
+        android:maxLength="65" />
+</LinearLayout>

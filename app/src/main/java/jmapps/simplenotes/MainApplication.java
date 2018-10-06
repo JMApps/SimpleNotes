@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
 public class MainApplication extends Application {
+
     private static final String NightMode = "night_mode";
     private boolean isNightModeEnabled = false;
     private static MainApplication singleton = null;

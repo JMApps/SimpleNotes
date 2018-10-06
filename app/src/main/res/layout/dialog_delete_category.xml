@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:drawablePadding="8dp"
+        android:drawableStart="@drawable/ic_delete_accent"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:singleLine="true"
+        android:text="@string/delete_category_t"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/delete_category_q"
+        android:textColor="@color/main_dark"
+        android:textSize="18sp" />
+</LinearLayout>

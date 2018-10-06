@@ -13,12 +13,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import jmapps.simplenotes.Model.BookmarkListModel;
-import jmapps.simplenotes.Model.MainListModel;
+import jmapps.simplenotes.Database.Tables.CategoryTable;
+import jmapps.simplenotes.Database.Tables.DatabaseCreation;
+import jmapps.simplenotes.Database.Tables.MainTable;
+import jmapps.simplenotes.Model.CategoryContentModel;
+import jmapps.simplenotes.Model.CategoryListModel;
+import jmapps.simplenotes.Model.FavoriteListModel;
+import jmapps.simplenotes.Model.MainItemListModel;
 
 public class DatabaseManager {
 
-    private DatabaseHelper databaseHelper;
+    private DatabaseCreation databaseMainList;
     private final Context context;
     private SQLiteDatabase sqLiteDatabase;
 
@@ -28,105 +33,182 @@ public class DatabaseManager {
 
     // Метод открытия базы данных
     public void databaseOpen() throws SQLException {
-        databaseHelper = new DatabaseHelper(context);
-        sqLiteDatabase = databaseHelper.getWritableDatabase();
+        databaseMainList = new DatabaseCreation(context);
+        sqLiteDatabase = databaseMainList.getWritableDatabase();
     }
 
     // Метод закрытия базы данных
     public void databaseClose() {
-        databaseHelper.close();
+        databaseMainList.close();
     }
 
-
-    // Метод вставки содержимого в пункт базы данных вместе с датой
-    public void databaseInsertItem(String chapterTitle, String chapterContent) {
+    // Создание главного пункта с текущей датой
+    public void insertMainItem(String itemTitle, String itemContent) {
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F MMM yyyy HH:mm");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm");
         String timeCreation = simpleDateFormat.format(new Date(System.currentTimeMillis()));
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseHelper.chapterTitle, chapterTitle);
-        contentValues.put(DatabaseHelper.chapterContent, chapterContent);
-        contentValues.put("time_creation", "Создано: " + timeCreation);
-        sqLiteDatabase.insert(DatabaseHelper.tableName, null, contentValues);
+        ContentValues mainItem = new ContentValues();
+        mainItem.put(MainTable.itemTitle, itemTitle);
+        mainItem.put(MainTable.itemContent, itemContent);
+        mainItem.put("time_creation", "Создано: " + timeCreation);
+        sqLiteDatabase.insert(MainTable.mainTable, null, mainItem);
     }
 
-    // Метод обновления пункта базы данных вместе с датой
-    public void databaseUpdateItem(int _id, String chapterTitle, String chapterContent) {
+    // Создание главного пункта с текущей датой
+    public void insertCategoryItem(int sampleId, String categoryItemTitle, String categoryItemContent) {
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F MMM yyyy HH:mm");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        String timeCreation = simpleDateFormat.format(new Date(System.currentTimeMillis()));
+
+        ContentValues categoryItem = new ContentValues();
+        categoryItem.put(MainTable.sampleCategory, sampleId);
+        categoryItem.put(MainTable.itemTitle, categoryItemTitle);
+        categoryItem.put(MainTable.itemContent, categoryItemContent);
+        categoryItem.put("time_creation", "Создано: " + timeCreation);
+        sqLiteDatabase.insert(MainTable.mainTable, null, categoryItem);
+    }
+
+    public void insertCategory(String strCategoryTitle) {
+        ContentValues categoryName = new ContentValues();
+        categoryName.put(CategoryTable.categoryTitle, strCategoryTitle);
+        sqLiteDatabase.insert(CategoryTable.categoryTable, null, categoryName);
+    }
+
+    // Изменение главного пункта с текущей датой
+    public void updateMainItem(int _id, String itemTitle, String itemContent) {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm");
         String timeChange = simpleDateFormat.format(new Date(System.currentTimeMillis()));
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseHelper._ID, _id);
-        contentValues.put(DatabaseHelper.chapterTitle, chapterTitle);
-        contentValues.put(DatabaseHelper.chapterContent, chapterContent);
-        contentValues.put(DatabaseHelper.chapterContent, chapterContent);
-        contentValues.put("time_change", "Изменено: " + timeChange);
-        sqLiteDatabase.update(DatabaseHelper.tableName, contentValues,
-                DatabaseHelper._ID + "=" + _id, null);
+        ContentValues mainItem = new ContentValues();
+        mainItem.put(MainTable._ID, _id);
+        mainItem.put(MainTable.itemTitle, itemTitle);
+        mainItem.put(MainTable.itemContent, itemContent);
+        mainItem.put("time_changed", "Изменено: " + timeChange);
+        sqLiteDatabase.update(MainTable.mainTable, mainItem,
+                MainTable._ID + " = " + _id, null);
     }
 
-    // Метод удаления пункта базы данных по ID пункта
-    public void databaseDeleteItem(int _id) {
-        sqLiteDatabase.delete(DatabaseHelper.tableName,
-                DatabaseHelper._ID + "=" + _id, null);
+    public void renameCategory(int _id, String strCategoryTitle) {
+        ContentValues categoryName = new ContentValues();
+        categoryName.put(CategoryTable._ID, _id);
+        categoryName.put(CategoryTable.categoryTitle, strCategoryTitle);
+        sqLiteDatabase.update(CategoryTable.categoryTable, categoryName,
+                CategoryTable._ID + " = " + _id, null);
     }
 
-    // Создание главного списка пунктов получаемого из базы данных
-    public List<MainListModel> getMainList() {
+    public void deleteMainItem(int _id) {
+        sqLiteDatabase.delete(MainTable.mainTable,
+                MainTable._ID + " = " + _id, null);
+    }
+
+    public void deleteCategory(int _id) {
+        sqLiteDatabase.delete(CategoryTable.categoryTable,
+                CategoryTable._ID + " = " + _id, null);
+    }
+
+    // Список категорий
+    public List<CategoryListModel> getCategoryList() {
 
         @SuppressLint("Recycle")
-        Cursor cursor = sqLiteDatabase.query(DatabaseHelper.tableName,
-                DatabaseHelper.columns,
-                null,
-                null, null, null, null);
+        Cursor cursor = sqLiteDatabase.query(CategoryTable.categoryTable,
+                CategoryTable.columnsCategoryItem,
+                null, null, null, null, null);
 
-        List<MainListModel> allMainList = new ArrayList<>();
+        List<CategoryListModel> allCategoryList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                allMainList.add(new MainListModel(
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper._ID)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterTitle)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterContent)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.timeCreation)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.timeChange))));
+                allCategoryList.add(new CategoryListModel(
+                        cursor.getString(cursor.getColumnIndex(CategoryTable._ID)),
+                        cursor.getString(cursor.getColumnIndex(CategoryTable.categoryTitle))));
+                cursor.moveToNext();
+            }
+        }
+        return allCategoryList;
+    }
+
+    // Главный список
+    public List<MainItemListModel> getMainItemsList() {
+
+        @SuppressLint("Recycle")
+        Cursor cursor = sqLiteDatabase.query(MainTable.mainTable,
+                MainTable.columnsMainItem,
+                null,
+                null, null, null, null);
+
+        List<MainItemListModel> allMainList = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                allMainList.add(new MainItemListModel(
+                        cursor.getString(cursor.getColumnIndex(MainTable._ID)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.itemTitle)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.itemContent)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.timeCreation)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.timeChanged))));
                 cursor.moveToNext();
             }
         }
         return allMainList;
     }
 
-    // Создание списка избранных пунктов получаемого из базы данных
-    public List<BookmarkListModel> getBookmarkList() {
+    // Главный список
+    public List<FavoriteListModel> getFavoriteItemsList() {
 
         @SuppressLint("Recycle")
-        Cursor cursor = sqLiteDatabase.query(DatabaseHelper.tableName,
-                DatabaseHelper.columns,
-                "Favorite = 1",
+        Cursor cursor = sqLiteDatabase.query(MainTable.mainTable,
+                MainTable.columnsMainItem,
+                "sample_favorite = 1",
                 null, null, null, null);
 
-        List<BookmarkListModel> allBookmarkList = new ArrayList<>();
+        List<FavoriteListModel> allFavoriteList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                allBookmarkList.add(new BookmarkListModel(
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper._ID)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterTitle)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.chapterContent)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.timeCreation)),
-                        cursor.getString(cursor.getColumnIndex(DatabaseHelper.timeChange))));
+                allFavoriteList.add(new FavoriteListModel(
+                        cursor.getString(cursor.getColumnIndex(MainTable._ID)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.itemTitle)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.itemContent)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.timeCreation)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.timeChanged))));
                 cursor.moveToNext();
             }
         }
-        return allBookmarkList;
+        return allFavoriteList;
+    }
+
+    // Главный список
+    public List<CategoryContentModel> getCategoryContentList(int categoryId) {
+
+        @SuppressLint("Recycle")
+        Cursor cursor = sqLiteDatabase.query(MainTable.mainTable,
+                MainTable.columnsMainItem,
+                "sample_category = ?",
+                new String[]{String.valueOf(categoryId)},
+                null, null, null);
+
+        List<CategoryContentModel> allCategoryContentList = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                allCategoryContentList.add(new CategoryContentModel(
+                        cursor.getString(cursor.getColumnIndex(MainTable._ID)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.itemTitle)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.itemContent)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.timeCreation)),
+                        cursor.getString(cursor.getColumnIndex(MainTable.timeChanged))));
+                cursor.moveToNext();
+            }
+        }
+        return allCategoryContentList;
     }
 
     // Метод добавления пункта в избранное
     public void addRemoveBookmark(boolean isChecked, int _id) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("Favorite", isChecked);
+        contentValues.put("sample_favorite", isChecked);
 
         if (isChecked) {
             Toast.makeText(context, "Добавлено в избранное", Toast.LENGTH_SHORT).show();
@@ -134,7 +216,7 @@ public class DatabaseManager {
             Toast.makeText(context, "Удалено из избраннного", Toast.LENGTH_SHORT).show();
         }
 
-        sqLiteDatabase.update(DatabaseHelper.tableName,
+        sqLiteDatabase.update(MainTable.mainTable,
                 contentValues,
                 "_id = ?",
                 new String[]{String.valueOf(_id)});
